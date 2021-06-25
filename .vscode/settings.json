@@ -11,6 +11,13 @@
 		"__bit_reference": "cpp",
 		"array": "cpp",
 		"iterator": "cpp",
-		"string_view": "cpp"
+		"string_view": "cpp",
+		"algorithm": "cpp",
+		"functional": "cpp",
+		"initializer_list": "cpp",
+		"locale": "cpp",
+		"optional": "cpp",
+		"type_traits": "cpp",
+		"utility": "cpp"
 	}
 }
