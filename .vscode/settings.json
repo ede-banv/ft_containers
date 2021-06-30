@@ -18,6 +18,9 @@
 		"locale": "cpp",
 		"optional": "cpp",
 		"type_traits": "cpp",
-		"utility": "cpp"
+		"utility": "cpp",
+		"bitset": "cpp",
+		"__functional_03": "cpp",
+		"system_error": "cpp"
 	}
 }
