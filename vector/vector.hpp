@@ -3,6 +3,8 @@
 
 # include <iostream>
 # include <memory>
+#include <iterator>
+#include <cstddef>
 
 namespace ft {
 
@@ -19,14 +21,44 @@ class vector
 		typedef ptrdiff_t							difference_type;
 		typedef size_t								size_type;
 
+		class iterator
+		{
+			public:
+				using iterator_category = std::random_access_iterator_tag;
+				using difference_type = std::ptrdiff_t;
+				using value_type = T;
+				using pointer = T*;
+				using reference = T&;
+
+				iterator();
+				iterator(const iterator& copy);
+				~iterator();
+
+				iterator&	operator=(const iterator& rhs);
+				iterator&	operator-(const iterator& rhs);
+				iterator&	operator+(const int& rhs);
+				iterator&	operator-(const int& rhs);
+				bool		operator==(const iterator& rhs);
+				bool		operator!=(const iterator& rhs);
+				bool		operator>(const iterator& rhs);
+				bool		operator>=(const iterator& rhs);
+				bool		operator<(const iterator& rhs);
+				bool		operator<=(const iterator& rhs);
+
+			private:
+				pointer	_ptr;
+		};
+
 		// ** MEMBER FUNCTIONS **
 
 		//Constructs an empty container, with no elements.
 		explicit vector (const allocator_type& alloc = allocator_type()):
-		_alloc(alloc), _size(0), _capacity(0) {}
+		_alloc(alloc), _size(0), _capacity(0)
+		{	_max_size = _alloc.max_size();	}
 		//Constructs a container with n elements. Each element is a copy of val.
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _alloc(alloc)
 		{
+			_max_size = _alloc.max_size();
 			_data = _alloc.allocate(n);
 			_size = _capacity = n;
 			for(int i = 0; i < n; ++i)
