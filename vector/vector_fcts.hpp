@@ -44,11 +44,13 @@ void		vector<T, Alloc>::reserve(size_type n)
 template < class T, class Alloc>
 void		vector<T, Alloc>::push_back(const value_type& val)
 {
+	this->resize(this->_size + 1, val);
 }
+
 template < class T, class Alloc>
 void		vector<T, Alloc>::pop_back()
 {
-
+	this->resize(this->_size, NULL); //what to set val as? consider as value_type;
 }
 
 }
