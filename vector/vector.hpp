@@ -2,6 +2,9 @@
 # define __VECTOR_H__
 
 # include <iostream>
+# include <memory>
+#include <iterator>
+#include <cstddef>
 
 namespace ft {
 
@@ -9,23 +12,57 @@ template < class T, class Alloc = std::allocator<T> >
 class vector
 {
 	public:
-		typedef T								value_type;
-		typedef Alloc							allocator_type;
-		typedef allocator_type::reference		reference;
-		typedef allocator_type::const_reference	const_reference;
-		typedef allocator_type::pointer			pointer;
-		typedef allocator_type::const_pointer	const_pointer;
-		typedef ptrdiff_t						difference_type;
-		typedef size_t							size_type;
+		typedef T									value_type;
+		typedef std::allocator<T>::rebind::other	allocator_type;
+		typedef allocator_type::reference			reference;
+		typedef allocator_type::const_reference		const_reference;
+		typedef allocator_type::pointer				pointer;
+		typedef allocator_type::const_pointer		const_pointer;
+		typedef ptrdiff_t							difference_type;
+		typedef size_t								size_type;
+
+		class iterator
+		{
+			public:
+				using iterator_category = std::random_access_iterator_tag;
+				using difference_type = std::ptrdiff_t;
+				using value_type = T;
+				using pointer = T*;
+				using reference = T&;
+
+				iterator();
+				iterator(const iterator& copy);
+				~iterator();
+
+				iterator&	operator=(const iterator& rhs);
+				iterator&	operator-(const iterator& rhs);
+				iterator&	operator+(const int& rhs);
+				iterator&	operator-(const int& rhs);
+				bool		operator==(const iterator& rhs);
+				bool		operator!=(const iterator& rhs);
+				bool		operator>(const iterator& rhs);
+				bool		operator>=(const iterator& rhs);
+				bool		operator<(const iterator& rhs);
+				bool		operator<=(const iterator& rhs);
+
+			private:
+				pointer	_ptr;
+		};
 
 		// ** MEMBER FUNCTIONS **
 
 		//Constructs an empty container, with no elements.
-		explicit vector (const allocator_type& alloc = allocator_type()): _alloc(alloc) {}
+		explicit vector (const allocator_type& alloc = allocator_type()):
+		_alloc(alloc), _size(0), _capacity(0)
+		{	_max_size = _alloc.max_size();	}
 		//Constructs a container with n elements. Each element is a copy of val.
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _alloc(alloc)
 		{
-			_data = new value_type[n];
+			_max_size = _alloc.max_size();
+			_data = _alloc.allocate(n);
+			_size = _capacity = n;
+			for(int i = 0; i < n; ++i)
+				_alloc.contruct(&_data[i], val);
 		}
 		//Constructs a container with as many elements as the range [first,last), with each element constructed
 		//from its corresponding element in that range, in the same order.
@@ -105,7 +142,7 @@ class vector
 		allocator_type			_alloc;
 		size_type				_size;
 		size_type				_capacity;
-		const static size_type	_max_size;
+		const static size_type	_max_size; //avec alloc
 
 };
 
