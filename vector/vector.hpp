@@ -24,27 +24,47 @@ class vector
 		class iterator
 		{
 			public:
-				using iterator_category = std::random_access_iterator_tag;
-				using difference_type = std::ptrdiff_t;
-				using value_type = T;
-				using pointer = T*;
-				using reference = T&;
+				typedef std::random_access_iterator_tag	iterator_category;
+				typedef std::ptrdiff_t					difference_type;
+				typedef T								value_type;
+				typedef T*								pointer;
+				typedef T&								reference;
 
 				iterator();
+				iterator(const void* ptr);
 				iterator(const iterator& copy);
 				~iterator();
 
+				iterator&	operator++() {
+					_ptr++;
+					return *this;
+				}
+				iterator&	operator++(int) {
+					iterator tmp = *this;
+					++(*this);
+					return tmp;
+				}
+				iterator&	operator--() {
+					_ptr--;
+					return *this;
+				}
+				iterator&	operator--(int) {
+					iterator tmp = *this;
+					--(*this);
+					return tmp;
+				}
 				iterator&	operator=(const iterator& rhs);
 				iterator&	operator-(const iterator& rhs);
 				iterator&	operator+(const int& rhs);
 				iterator&	operator-(const int& rhs);
+				reference	operator*() const {	return *m_ptr;	}
+				pointer		operator->() {	return m_ptr;	}
 				bool		operator==(const iterator& rhs);
 				bool		operator!=(const iterator& rhs);
 				bool		operator>(const iterator& rhs);
 				bool		operator>=(const iterator& rhs);
 				bool		operator<(const iterator& rhs);
 				bool		operator<=(const iterator& rhs);
-
 			private:
 				pointer	_ptr;
 		};
@@ -129,10 +149,10 @@ class vector
 		bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
 
 		// ** ITERATORS **
-		iterator				begin();
-		const_iterator			begin() const;
-		iterator				end();
-		const_iterator			end() const;
+		iterator				begin() {	return iterator(&_data[0]);	}
+		const_iterator			begin() const {	return const_iterator(&_data[0]);	}
+		iterator				end() {	return iterator(&_data[this->size]);	}
+		const_iterator			end() const {	return const_iterator(&_data[this->size]);	}
 		reverse_iterator		rbegin();
 		const_reverse_iterator	rbegin() const;
 		reverse_iterator		rend();
