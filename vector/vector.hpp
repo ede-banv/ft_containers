@@ -31,8 +31,8 @@ class vector
 				typedef T&								reference;
 
 				iterator();
-				iterator(const void* ptr);
-				iterator(const iterator& copy);
+				iterator(pointer ptr): _ptr(ptr) {}
+				iterator(const iterator& copy){	*this = copy;	}
 				~iterator();
 
 				iterator&	operator++() {
@@ -57,14 +57,14 @@ class vector
 				iterator&	operator-(const iterator& rhs);
 				iterator&	operator+(const int& rhs);
 				iterator&	operator-(const int& rhs);
-				reference	operator*() const {	return *m_ptr;	}
-				pointer		operator->() {	return m_ptr;	}
-				bool		operator==(const iterator& rhs);
-				bool		operator!=(const iterator& rhs);
-				bool		operator>(const iterator& rhs);
-				bool		operator>=(const iterator& rhs);
-				bool		operator<(const iterator& rhs);
-				bool		operator<=(const iterator& rhs);
+				reference	operator*() const {	return *_ptr;	}
+				pointer		operator->() const {	return _ptr;	}
+				bool		operator==(const iterator& rhs) const {	return (_ptr == rhs._ptr ? true : false);	}
+				bool		operator!=(const iterator& rhs) const {	return (_ptr != rhs._ptr ? true : false);	}
+				bool		operator>(const iterator& rhs) const {	return (_ptr > rhs._ptr ? true : false);	}
+				bool		operator>=(const iterator& rhs) const {	return (_ptr > rhs._ptr || _ptr == rhs._ptr ? true : false);	}
+				bool		operator<(const iterator& rhs) const {	return (_ptr < rhs._ptr ? true : false);	}
+				bool		operator<=(const iterator& rhs) const {	return (_ptr < rhs._ptr || _ptr == rhs._ptr ? true : false);	}
 			private:
 				pointer	_ptr;
 		};
