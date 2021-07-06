@@ -8,6 +8,7 @@
 
 namespace ft {
 
+
 template < class T, class Alloc = std::allocator<T> >
 class vector
 {
@@ -237,19 +238,45 @@ class vector
 };
 
 // ** RELATIONAL OPERATORS **
-//compare lexicographiquement les valeurs dans le vector
 template <class T, class Alloc>
-bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	if (lhs.size() != rhs.size())
+		return false;
+	for (vector<T, Alloc>::size_type i = 0; i < lhs.size(); ++i)
+		if (lhs[i] != rhs[i])
+			return false;
+	return true;
+}
+
 template <class T, class Alloc>
-bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	return (lhs == rhs ? false : true);
+}
+
 template <class T, class Alloc>
-bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	if (lhs.size() > rhs.size())
+		return false;
+	for (vector::size_type i = 0; i < lhs.size(); ++i)
+		if (lhs[i] > rhs[i])
+			return false;
+	return true;
+}
+
 template <class T, class Alloc>
-bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	return (lhs < rhs || lhs == rhs ? true : false);
+}
+
 template <class T, class Alloc>
-bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	return (lhs < rhs ? false : true);
+}
+
 template <class T, class Alloc>
-bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	return (lhs > rhs || lhs == rhs ? true : false);
+}
 
 
 }

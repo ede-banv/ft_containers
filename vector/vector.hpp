@@ -19,7 +19,7 @@ vector<T, Alloc>&	vector<T, Alloc>::operator=(const vector& rhs)
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::size_type	vector<T, Alloc>::size() const
-{	return this->_size;	}
+{	return (this->_size);	}
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::size_type	vector<T, Alloc>::max_size() const
@@ -45,7 +45,7 @@ void		vector<T, Alloc>::resize(size_type n, value_type val) {
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::size_type	vector<T, Alloc>::capacity() const
-{	return this->_capacity;	}
+{	return (this->_capacity);	}
 
 template < class T, class Alloc>
 bool		vector<T, Alloc>::empty() const
@@ -69,6 +69,26 @@ void		vector<T, Alloc>::reserve(size_type n) {
 // ***************
 // ** MODIFIERS ** : assign, swap
 // ***************
+
+template < class T, class Alloc> template <class InputIterator>
+void		vector<T, Alloc>::assign(InputIterator first, InputIterator last) {
+	this->reserve(last - first);
+	iterator	it = this->begin();
+	while (first != last)
+	{
+		*it = *first;
+		first++;
+		it++;
+	}
+
+}
+
+template < class T, class Alloc>
+void		vector<T, Alloc>::assign(size_type n, const value_type& val) {
+	this->reserve(n);
+	for (size_type i = 0; i < n; ++i)
+		this->_data[i] = val;
+}
 
 template < class T, class Alloc>
 void		vector<T, Alloc>::push_back(const value_type& val)
