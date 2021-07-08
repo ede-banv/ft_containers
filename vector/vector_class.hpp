@@ -145,8 +145,7 @@ class vector
 		// ** MEMBER FUNCTIONS **
 
 		explicit vector (const allocator_type& alloc = allocator_type()):
-		_alloc(alloc), _size(0), _capacity(0)
-		{	_max_size = _alloc.max_size();	}
+		_alloc(alloc), _size(0), _capacity(0), _max_size(_alloc.max_size())	{}
 
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _alloc(alloc)
 		{
