@@ -4,6 +4,7 @@
 # include <iostream>
 # include <memory>
 #include <iterator>
+#include <algorithm>
 #include <cstddef>
 
 namespace ft {
@@ -257,10 +258,9 @@ template <class T, class Alloc>
 bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 	if (lhs.size() > rhs.size())
 		return false;
-	for (vector::size_type i = 0; i < lhs.size(); ++i)
-		if (lhs[i] > rhs[i])
-			return false;
-	return true;
+	if (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()))
+		return true;
+	return false;
 }
 
 template <class T, class Alloc>
