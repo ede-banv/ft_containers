@@ -41,8 +41,8 @@ class vector
 					_ptr++;
 					return (*this);
 				}
-				iterator&	operator++(int) {
-					iterator tmp = *this;
+				iterator	operator++(int) {
+					iterator tmp(*this);
 					++(*this);
 					return (tmp);
 				}
@@ -50,22 +50,22 @@ class vector
 					_ptr--;
 					return (*this);
 				}
-				iterator&	operator--(int) {
-					iterator tmp = *this;
+				iterator	operator--(int) {
+					iterator tmp(*this);
 					--(*this);
-					return tmp;
+					return (tmp);
 				}
 				iterator&	operator=(const iterator& rhs) {
 					_ptr = rhs._ptr;
 					return (*this);
 				}
-				iterator&	operator-(const iterator& rhs) {	return (_ptr - rhs._ptr);	}
-				iterator&	operator+(const int& rhs) {
-					for (int i = 0; i < rhs; ++i)
+				iterator	operator-(const iterator& rhs) {	return iterator(_ptr - rhs._ptr);	}
+				iterator	operator+(const difference_type& rhs) {
+					for (difference_type i = 0; i < rhs; ++i)
 						++(*this);
 					return (*this);
 				}
-				iterator&	operator-(const int& rhs) {
+				iterator	operator-(const int& rhs) {
 					for (int i = 0; i < rhs; ++i)
 						--(*this);
 					return (*this);
@@ -95,13 +95,13 @@ class vector
 				const_iterator(const iterator& copy): _ptr(copy.operator->()) {}
 				const_iterator(pointer ptr): _ptr(ptr) {}
 				const_iterator(const_iterator& copy){	*this = copy;	}
-				~const_iterator();
+				~const_iterator() {}
 
 				const_iterator&	operator++() {
 					_ptr++;
 					return (*this);
 				}
-				const_iterator&	operator++(int) {
+				const_iterato	operator++(int) {
 					const_iterator tmp = *this;
 					++(*this);
 					return (tmp);
@@ -110,7 +110,7 @@ class vector
 					_ptr--;
 					return (*this);
 				}
-				const_iterator&	operator--(int) {
+				const_iterator	operator--(int) {
 					const_iterator tmp = *this;
 					--(*this);
 					return tmp;
@@ -119,19 +119,19 @@ class vector
 					_ptr = rhs._ptr;
 					return (*this);
 				}
-				const_iterator&	operator-(const const_iterator& rhs) {	return (_ptr - rhs._ptr);	}
-				const_iterator&	operator+(const int& rhs) {
+				const_iterator	operator-(const const_iterator& rhs) {	return const_iterator(_ptr - rhs._ptr);	}
+				const_iterator	operator+(const int& rhs) {
 					for (int i = 0; i < rhs; ++i)
 						++(*this);
 					return (*this);
 				}
-				const_iterator&	operator-(const int& rhs) {
+				const_iterator	operator-(const int& rhs) {
 					for (int i = 0; i < rhs; ++i)
 						--(*this);
 					return (*this);
 				}
 				reference	operator*() const {	return *_ptr;	}
-				pointer	operator->() const {	return _ptr;	}
+				pointer		operator->() const {	return _ptr;	}
 				bool			operator==(const const_iterator& rhs) const {	return (_ptr == rhs._ptr);	}
 				bool			operator!=(const const_iterator& rhs) const {	return (_ptr != rhs._ptr);	}
 				bool			operator>(const const_iterator& rhs) const {	return (_ptr > rhs._ptr);	}
@@ -145,7 +145,8 @@ class vector
 		// ** MEMBER FUNCTIONS **
 
 		explicit vector (const allocator_type& alloc = allocator_type()):
-		_alloc(alloc), _size(0), _capacity(0), _max_size(_alloc.max_size())	{}
+		_alloc(alloc), _size(0), _capacity(0)
+		{	_max_size = _alloc.max_size();	}
 
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _alloc(alloc)
 		{
@@ -222,8 +223,8 @@ class vector
 		// ** ITERATORS **
 		iterator				begin() {	return (iterator(&_data[0]));	}
 		const_iterator			begin() const {	return (const_iterator(&_data[0]));	}
-		iterator				end() {	return (iterator(&_data[this->size()]));	}
-		const_iterator			end() const {	return (const_iterator(&_data[this->size()]));	}
+		iterator				end() {	return (iterator(&_data[_size]));	}
+		const_iterator			end() const {	return (const_iterator(&_data[_size]));	}
 		//reverse_iterator		rbegin();
 		//const_reverse_iterator	rbegin() const;
 		//reverse_iterator		rend();
@@ -233,7 +234,7 @@ class vector
 		allocator_type		_alloc;
 		size_type			_size;
 		size_type			_capacity;
-		static size_type	_max_size;
+		size_type	_max_size;
 
 };
 
@@ -242,7 +243,7 @@ template <class T, class Alloc>
 bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 	if (lhs.size() != rhs.size())
 		return false;
-	for (vector<T, Alloc>::size_type i = 0; i < lhs.size(); ++i)
+	for (typename vector<T, Alloc>::size_type i = 0; i < lhs.size(); ++i)
 		if (lhs[i] != rhs[i])
 			return false;
 	return true;

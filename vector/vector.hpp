@@ -70,7 +70,8 @@ void		vector<T, Alloc>::reserve(size_type n) {
 // ** MODIFIERS ** : assign, swap
 // ***************
 
-template < class T, class Alloc> template <class InputIterator>
+template < class T, class Alloc>
+template <class InputIterator>
 void		vector<T, Alloc>::assign(InputIterator first, InputIterator last) {
 	this->reserve(last - first);
 	iterator	it = this->begin();
@@ -115,7 +116,8 @@ void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type&
 	}
 }
 
-template < class T, class Alloc> template < class InputIterator>
+template < class T, class Alloc>
+template < class InputIterator>
 void		vector<T, Alloc>::insert(iterator position, InputIterator first, InputIterator last) {
 	while (first != last)
 	{
@@ -127,17 +129,18 @@ void		vector<T, Alloc>::insert(iterator position, InputIterator first, InputIter
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator position) {
-	for (size_type i = 0; *(position + i) != this->end(); ++i)
-		*(position + i) = *(position + i + 1);
-	this->resize(this->_size - 1);
+	this->erase(position, position + 1);
 	return (position);
 }
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator first, iterator last) {
-	size_type	n = last - first;
-	for (size_type i = 0; i < n; ++i)
-		this->erase(first);
+	size_type n = 0;
+	while (first + n != last)
+		n++;
+	for (size_type i = 0; (last + i) != this->end(); ++i)
+		*(first + i) = *(last + i);
+	this->resize(this->_size - n);
 	return (first);
 }
 
