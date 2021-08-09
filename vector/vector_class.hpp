@@ -101,7 +101,7 @@ class vector
 					_ptr++;
 					return (*this);
 				}
-				const_iterato	operator++(int) {
+				const_iterator	operator++(int) {
 					const_iterator tmp = *this;
 					++(*this);
 					return (tmp);
