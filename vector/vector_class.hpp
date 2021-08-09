@@ -6,6 +6,7 @@
 #include <iterator>
 #include <algorithm>
 #include <cstddef>
+#include "../iterator_traits.hpp"
 
 namespace ft {
 
@@ -56,17 +57,19 @@ class vector
 					return (tmp);
 				}
 				iterator&	operator=(const iterator& rhs) {
+					if (this == &rhs)
+						return *this;
 					_ptr = rhs._ptr;
 					return (*this);
 				}
-				iterator	operator-(const iterator& rhs) {	return iterator(_ptr - rhs._ptr);	}
+				difference_type	operator-(const iterator& rhs) {	return (_ptr - rhs._ptr);	}
 				iterator	operator+(const difference_type& rhs) {
 					for (difference_type i = 0; i < rhs; ++i)
 						++(*this);
 					return (*this);
 				}
-				iterator	operator-(const int& rhs) {
-					for (int i = 0; i < rhs; ++i)
+				iterator	operator-(const difference_type& rhs) {
+					for (difference_type i = 0; i < rhs; ++i)
 						--(*this);
 					return (*this);
 				}
@@ -92,7 +95,7 @@ class vector
 				typedef const T&						reference;
 
 				const_iterator(): _ptr(NULL) {}
-				const_iterator(const iterator& copy): _ptr(copy.operator->()) {}
+				const_iterator(const iterator& copy) {	_ptr = copy.operator->();	}
 				const_iterator(pointer ptr): _ptr(ptr) {}
 				const_iterator(const_iterator& copy){	*this = copy;	}
 				~const_iterator() {}
@@ -101,7 +104,7 @@ class vector
 					_ptr++;
 					return (*this);
 				}
-				const_iterato	operator++(int) {
+				const_iterator	operator++(int) {
 					const_iterator tmp = *this;
 					++(*this);
 					return (tmp);
@@ -116,6 +119,8 @@ class vector
 					return tmp;
 				}
 				const_iterator&	operator=(const const_iterator& rhs) {
+					if (this == &rhs)
+						return *this;
 					_ptr = rhs._ptr;
 					return (*this);
 				}
@@ -158,7 +163,7 @@ class vector
 		}
 
 		template <class InputIterator>
-        vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()): _alloc(alloc) {
+        vector (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _alloc(alloc) {
 			insert(begin(), first, last);
 		}
 
@@ -206,15 +211,15 @@ class vector
 		{	return (_data[_size -1]);	}
 
 		// ** MODIFIERS **
-		template <class InputIterator>
-		void		assign(InputIterator first, InputIterator last);
+		template <class InputIterator> //enable_if
+		void		assign(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last);
 		void		assign(size_type n, const value_type& val);
 		void		push_back(const value_type& val);
 		void		pop_back();
 		iterator	insert(iterator position, const value_type& val);
 		void		insert(iterator position, size_type n, const value_type& val);
-		template <class InputIterator>
-		void		insert(iterator position, InputIterator first, InputIterator last);
+		template <class InputIterator> //enable_if
+		void		insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last);
 		iterator	erase(iterator position);
 		iterator	erase(iterator first, iterator last); //opti
 		void		swap(vector& x);
