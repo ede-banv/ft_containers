@@ -124,14 +124,14 @@ class vector
 					_ptr = rhs._ptr;
 					return (*this);
 				}
-				const_iterator	operator-(const const_iterator& rhs) {	return const_iterator(_ptr - rhs._ptr);	}
-				const_iterator	operator+(const int& rhs) {
-					for (int i = 0; i < rhs; ++i)
+				difference_type	operator-(const const_iterator& rhs) {	return (_ptr - rhs._ptr);	}
+				const_iterator	operator+(const difference_type& rhs) {
+					for (difference_type i = 0; i < rhs; ++i)
 						++(*this);
 					return (*this);
 				}
-				const_iterator	operator-(const int& rhs) {
-					for (int i = 0; i < rhs; ++i)
+				const_iterator	operator-(const difference_type& rhs) {
+					for (difference_type i = 0; i < rhs; ++i)
 						--(*this);
 					return (*this);
 				}
@@ -164,7 +164,7 @@ class vector
 
 		template <class InputIterator>
         vector (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _alloc(alloc) {
-			insert(begin(), first, last);
+			assign(first, last);
 		}
 
 		vector& operator= (const vector& rhs);

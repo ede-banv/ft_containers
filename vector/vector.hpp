@@ -11,7 +11,7 @@ vector<T, Alloc>&	vector<T, Alloc>::operator=(const vector& rhs)
 	if (this == &rhs)
 		return *this;
 	this->clear();
-	this->insert(this->begin(), rhs.begin(), rhs.end());
+	this->assign(rhs.begin(), rhs.end());
 	return (*this);
 }
 
@@ -102,7 +102,7 @@ void		vector<T, Alloc>::pop_back()
 {	this->_alloc.destroy(&this->_data[this->_size - 1]);	}
 
 template < class T, class Alloc>
-vector<T, Alloc>::iterator	vector<T, Alloc>::insert(iterator position, const value_type& val) {
+typename vector<T, Alloc>::iterator	vector<T, Alloc>::insert(iterator position, const value_type& val) {
 	this->reserve(this->_size + 1);
 	*(position + 1) = *position;
 	*position = val;
@@ -130,13 +130,13 @@ void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename 
 }
 
 template < class T, class Alloc>
-vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator position) {
+typename vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator position) {
 	this->erase(position, position + 1);
 	return (position);
 }
 
 template < class T, class Alloc>
-vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator first, iterator last) {
+typename vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator first, iterator last) {
 	size_type n = 0;
 	while (first + n != last)
 		n++;
