@@ -8,6 +8,8 @@ namespace ft {
 template < class T, class Alloc>
 vector<T, Alloc>&	vector<T, Alloc>::operator=(const vector& rhs)
 {
+	if (this == &rhs)
+		return *this;
 	this->clear();
 	this->insert(this->begin(), rhs.begin(), rhs.end());
 	return (*this);
@@ -72,7 +74,7 @@ void		vector<T, Alloc>::reserve(size_type n) {
 
 template < class T, class Alloc>
 template <class InputIterator>
-void		vector<T, Alloc>::assign(InputIterator first, InputIterator last) {
+void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 	this->reserve(last - first);
 	iterator	it = this->begin();
 	while (first != last)
@@ -118,7 +120,7 @@ void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type&
 
 template < class T, class Alloc>
 template < class InputIterator>
-void		vector<T, Alloc>::insert(iterator position, InputIterator first, InputIterator last) {
+void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 	while (first != last)
 	{
 		this->insert(position, *first);
