@@ -3,10 +3,10 @@
 
 # include <iostream>
 # include <memory>
-#include <iterator>
-#include <algorithm>
-#include <cstddef>
-#include "../iterator_traits.hpp"
+# include <iterator>
+# include <algorithm>
+# include <cstddef>
+# include "../iterator_traits.hpp"
 
 namespace ft {
 
@@ -24,7 +24,15 @@ class vector
 		typedef ptrdiff_t									difference_type;
 		typedef size_t										size_type;
 
-		class iterator
+		class iterator: public RandIt<value_type> {
+			public:
+				iterator(): RandIt<value_type>() {}
+				iterator(pointer ptr): RandIt<value_type>(ptr) {}
+				iterator(const iterator& copy) {	*this = copy;	}
+			private:
+
+		}
+		/*class iterator
 		{
 			public:
 				typedef std::random_access_iterator_tag	iterator_category;
@@ -63,16 +71,8 @@ class vector
 					return (*this);
 				}
 				difference_type	operator-(const iterator& rhs) {	return (_ptr - rhs._ptr);	}
-				iterator	operator+(const difference_type& rhs) {
-					for (difference_type i = 0; i < rhs; ++i)
-						++(*this);
-					return (*this);
-				}
-				iterator	operator-(const difference_type& rhs) {
-					for (difference_type i = 0; i < rhs; ++i)
-						--(*this);
-					return (*this);
-				}
+				iterator	operator+(const difference_type& rhs) { return (_ptr + rhs);	}
+				iterator	operator-(const difference_type& rhs) {	return (_ptr - rhs);	}
 				reference	operator*() const {	return *_ptr;	}
 				pointer		operator->() const {	return _ptr;	}
 				bool		operator==(const iterator& rhs) const {	return (_ptr == rhs._ptr);	}
@@ -145,7 +145,7 @@ class vector
 				bool			operator<=(const const_iterator& rhs) const {	return (_ptr <= rhs._ptr);	}
 			private:
 				pointer	_ptr;
-		};
+		};*/
 
 		// ** MEMBER FUNCTIONS **
 
@@ -226,10 +226,10 @@ class vector
 		void		clear();
 
 		// ** ITERATORS **
-		iterator				begin() {	return (iterator(&_data[0]));	}
-		const_iterator			begin() const {	return (const_iterator(&_data[0]));	}
-		iterator				end() {	return (iterator(&_data[_size]));	}
-		const_iterator			end() const {	return (const_iterator(&_data[_size]));	}
+		iterator				begin() {	return (iterator(_data));	}
+		const_iterator			begin() const {	return (const_iterator(_data));	}
+		iterator				end() {	return (iterator(_data + _size));	}
+		const_iterator			end() const {	return (const_iterator(_data + _size));	}
 		//reverse_iterator		rbegin();
 		//const_reverse_iterator	rbegin() const;
 		//reverse_iterator		rend();
