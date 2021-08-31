@@ -35,7 +35,6 @@ class vector
 		/*class iterator
 		{
 			public:
-				typedef std::random_access_iterator_tag	iterator_category;
 				typedef std::ptrdiff_t					difference_type;
 				typedef T								value_type;
 				typedef T*								pointer;
@@ -88,7 +87,6 @@ class vector
 		class const_iterator
 		{
 			public:
-				typedef std::random_access_iterator_tag	iterator_category;
 				typedef std::ptrdiff_t					difference_type;
 				typedef const T							value_type;
 				typedef const T*						pointer;
@@ -234,6 +232,9 @@ class vector
 		//const_reverse_iterator	rbegin() const;
 		//reverse_iterator		rend();
 		//const_reverse_iterator	rend() const;
+
+		// ** ALLOCATOR **
+		//allocator_type get_allocator() const;
 	private:
 		value_type*			_data;
 		allocator_type		_alloc;
