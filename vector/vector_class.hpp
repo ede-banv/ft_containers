@@ -6,7 +6,9 @@
 # include <iterator>
 # include <algorithm>
 # include <cstddef>
-# include "../iterator_traits.hpp"
+//# include "../iterator_traits.hpp"
+# include "../utils.hpp"
+# include "../randomiterator.hpp"
 
 namespace ft {
 
@@ -29,9 +31,16 @@ class vector
 				iterator(): RandIt<value_type>() {}
 				iterator(pointer ptr): RandIt<value_type>(ptr) {}
 				iterator(const iterator& copy) {	*this = copy;	}
-			private:
+			//private:
+				iterator(const RandIt<value_type>& copy): RandIt<value_type>(copy) {}
+		};
 
-		}
+		class const_iterator: public RandIt<const value_type> {
+			public:
+				const_iterator(): RandIt<const value_type>() {}
+				const_iterator(pointer ptr): RandIt<const value_type>(ptr) {}
+				const_iterator(const RandIt<const value_type>& copy): RandIt<const value_type>(copy) {}
+		};
 		/*class iterator
 		{
 			public:
@@ -283,7 +292,6 @@ template <class T, class Alloc>
 bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 	return (lhs > rhs || lhs == rhs ? true : false);
 }
-
 
 }
 
