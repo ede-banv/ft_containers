@@ -10,6 +10,7 @@ class RandIt {
 	public:
 		typedef std::random_access_iterator_tag	iterator_category;
 		typedef std::ptrdiff_t					difference_type;
+		typedef size_t							size_type;
 		typedef T								value_type;
 		typedef T*								pointer;
 		typedef T&								reference;
@@ -17,7 +18,7 @@ class RandIt {
 		RandIt(): _ptr(NULL) {}
 		RandIt(pointer ptr): _ptr(ptr) {}
 		RandIt(const RandIt& copy){	*this = copy;	}
-		~RandIt();
+		virtual ~RandIt() {}
 
 		RandIt&	operator=(const RandIt& rhs) {
 			if (this == &rhs)
@@ -45,17 +46,16 @@ class RandIt {
 		}
 
 		difference_type	operator-(const RandIt& rhs) {	return (_ptr - rhs._ptr);	}
-		RandIt			operator-(const difference_type& rhs) {	return (_ptr - rhs);	}
-		RandIt			operator+(const difference_type& rhs) { return (_ptr + rhs);	}
+		RandIt			operator-(const difference_type& rhs) {	return (RandIt(_ptr - rhs));	}
+		RandIt			operator+(const difference_type& rhs) { return (RandIt(_ptr + rhs));	}
 		friend RandIt	operator+(const difference_type& lhs, const RandIt& rhs) {	return(rhs + lhs);	}
-		RandIt			operator-=(const difference_type& rhs) {}
-		RandIt			operator+=(const difference_type& rhs) {}
+		RandIt			operator-=(const difference_type& rhs) {	return (RandIt(_ptr - rhs));	}
+		RandIt			operator+=(const difference_type& rhs) {	return (RandIt(_ptr + rhs));	}
 
 		reference		operator*() const {	return *_ptr;	}
 		pointer			operator->() const {	return _ptr;	}
 		reference		operator[](size_type n);
-		const_reference operator[](size_type n) const;
-		difference_type	operator[](const Random<value_type>&) const;
+		difference_type	operator[](const RandIt&) const;
 
 		bool		operator==(const RandIt& rhs) const {	return (_ptr == rhs._ptr);	}
 		bool		operator!=(const RandIt& rhs) const {	return (_ptr != rhs._ptr);	}
