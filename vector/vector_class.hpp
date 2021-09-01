@@ -175,7 +175,7 @@ class vector
 		}
 
 		vector& operator= (const vector& rhs);
-		vector (const vector& copy) {	*this = copy;	}
+		vector (const vector& copy): _alloc(copy.get_allocator()), _capacity(0), _max_size(copy.max_size()) {	*this = copy;	}
 
 		virtual ~vector() {
 			this->clear();
@@ -243,13 +243,13 @@ class vector
 		//const_reverse_iterator	rend() const;
 
 		// ** ALLOCATOR **
-		//allocator_type get_allocator() const;
+		allocator_type get_allocator() const { return(_alloc);	}
 	private:
 		value_type*			_data;
 		allocator_type		_alloc;
 		size_type			_size;
 		size_type			_capacity;
-		size_type	_max_size;
+		size_type			_max_size;
 
 };
 

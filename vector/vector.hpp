@@ -11,7 +11,10 @@ vector<T, Alloc>&	vector<T, Alloc>::operator=(const vector& rhs)
 	if (this == &rhs)
 		return *this;
 	this->clear();
-	this->assign(rhs.begin(), rhs.end());
+	//this->assign(rhs.begin(), rhs.end());
+	this->insert(this->begin(), rhs.begin(), rhs.end());
+	printf("\nCOPY size: %lu, capacity: %lu, max_size: %lu\n", rhs.size(), rhs.capacity(), rhs.max_size());
+	printf("\nNEW size: %lu, capacity: %lu, max_size: %lu\n", this->_size, this->_capacity, this->_max_size);
 	return (*this);
 }
 
@@ -39,8 +42,8 @@ void		vector<T, Alloc>::resize(size_type n, value_type val) {
 	else if (n > this->_size)
 	{
 		size_type	dcap = this->_capacity * 2;
-		this->reserve(this->_size <= dcap ? dcap : n);
-		for(size_type i = this->_size; i < n; ++i)
+		this->reserve(this->_size <= dcap && n > this->_capacity ? dcap : n);
+		for(size_type i = this->_size; i < n; i++)
 			this->_alloc.construct(&this->_data[i], val);
 		this->_size = n;
 	}
@@ -59,7 +62,7 @@ void		vector<T, Alloc>::reserve(size_type n) {
 	if (n <= this->_capacity)
 		return;
 	value_type*	tmp = this->_alloc.allocate(n);
-	for(size_type i = 0; i < this->_size; ++i)
+	for(size_type i = 0; i < this->_size; i++)
 	{
 		this->_alloc.construct(&tmp[i], this->_data[i]);
 		this->pop_back();
@@ -80,7 +83,6 @@ void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::
 	iterator	it = this->begin();
 	while (first != last)
 	{
-	printf("\nlol %d\n", *it);
 		*it = *first;
 		first++;
 		it++;
@@ -91,7 +93,7 @@ void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::
 template < class T, class Alloc>
 void		vector<T, Alloc>::assign(size_type n, const value_type& val) {
 	this->reserve(n);
-	for (size_type i = 0; i < n; ++i)
+	for (size_type i = 0; i < n; i++)
 		this->_data[i] = val;
 }
 
@@ -123,9 +125,14 @@ void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type&
 template < class T, class Alloc>
 template < class InputIterator>
 void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
-	while (first != last)
+	size_type diff = position - this->begin();
+	this->resize(this->size() + (last - first));
+	position = this->begin() + diff;
+	iterator ite = this->end();
+	while (first != last && position + 1 != ite)
 	{
-		this->insert(position, *first);
+		*(position + 1) = *position;
+		*position = *first;
 		++first;
 		++position;
 	}
@@ -142,7 +149,7 @@ typename vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator first, iter
 	size_type n = 0;
 	while (first + n != last)
 		n++;
-	for (size_type i = 0; (last + i) != this->end(); ++i)
+	for (size_type i = 0; (last + i) != this->end(); i++)
 		*(first + i) = *(last + i);
 	this->resize(this->_size - n);
 	return (first);
