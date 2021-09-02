@@ -60,17 +60,14 @@ void		vector<T, Alloc>::reserve(size_type n) {
 		return;
 	value_type*	tmp = this->_alloc.allocate(n);
 	for(size_type i = 0; i < this->_size; i++)
-	{
 		this->_alloc.construct(&tmp[i], this->_data[i]);
-		this->pop_back();
-	}
-	this->_alloc.deallocate(this->_data, this->_capacity);
+	this->clear();
 	this->_data = tmp;
 	this->_capacity = n;
 }
 
 // ***************
-// ** MODIFIERS ** : assign, swap
+// ** MODIFIERS ** : assign
 // ***************
 
 template < class T, class Alloc>
@@ -108,13 +105,17 @@ typename vector<T, Alloc>::iterator	vector<T, Alloc>::insert(iterator position, 
 	*(position + 1) = *position;
 	*position = val;
 	return position;
-} //grosse merde
+}
 
 template < class T, class Alloc>
 void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type& val) {
+	difference_type  diff = position - this->begin();
+	this->reserve(this->_size + n);
+	position = this->begin() + diff;
 	while (n > 0)
 	{
-		this->insert(position, val);
+		*position = val;
+		position++;
 		--n;
 	}
 }
@@ -123,12 +124,14 @@ template < class T, class Alloc>
 template < class InputIterator>
 void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 	size_type diff = position - this->begin();
-	this->resize(this->size() + (last - first));
+	difference_type range = last - first;
+	this->resize(this->size() + range, 0);
 	position = this->begin() + diff;
 	iterator ite = this->end();
-	while (first != last && position + 1 != ite)
+	for (difference_type i = 0; position + range + i != ite; i++)
+		*(position + range) = *position;
+	while (first != last)
 	{
-		*(position + 1) = *position;
 		*position = *first;
 		++first;
 		++position;
@@ -155,7 +158,22 @@ typename vector<T, Alloc>::iterator	vector<T, Alloc>::erase(iterator first, iter
 template < class T, class Alloc>
 void		vector<T, Alloc>::swap(vector& x)
 {
-	(void)x;
+	vector<T, Alloc>	tmp;
+
+	tmp._capacity = this->capacity();
+	tmp._size = this->size();
+	tmp._max_size = this->max_size();
+	tmp._data = this->_data;
+
+	this->_capacity = x.capacity();
+	this->_size = x.size();
+	this->_max_size = x.max_size();
+	this->_data = x._data;
+
+	x._capacity = tmp.capacity();
+	x._size = tmp.size();
+	x._max_size = tmp.max_size();
+	x._data = tmp._data;
 }
 
 template < class T, class Alloc>

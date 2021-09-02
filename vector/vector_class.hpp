@@ -58,11 +58,10 @@ class vector
 		}
 
 		template <class InputIterator>
-        vector (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _alloc(alloc) {
-			assign(first, last);
+        vector (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const allocator_type& alloc = allocator_type()): _alloc(alloc), _max_size(_alloc.max_size()) {
+			insert(begin(),first, last);
 		}
 
-		vector& operator= (const vector& rhs);
 		vector (const vector& copy): _alloc(copy.get_allocator()), _capacity(0), _max_size(_alloc.max_size()) {	*this = copy;	}
 
 		virtual ~vector() {
@@ -70,7 +69,7 @@ class vector
 			_alloc.deallocate(_data, this->_capacity);
 		}
 
-
+		vector& operator= (const vector& rhs);
 
 		// ** CAPACITY **
 		size_type	size() const;
