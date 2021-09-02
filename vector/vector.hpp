@@ -59,11 +59,17 @@ void		vector<T, Alloc>::reserve(size_type n) {
 	if (n <= this->_capacity)
 		return;
 	value_type*	tmp = this->_alloc.allocate(n);
+	size_type tmpsize = this->_size;
 	for(size_type i = 0; i < this->_size; i++)
+	{
 		this->_alloc.construct(&tmp[i], this->_data[i]);
-	this->clear();
+		this->_alloc.destroy(&this->_data[i]);
+	}
+	if (this->_capacity)
+		this->_alloc.deallocate(this->_data, this->_capacity);
 	this->_data = tmp;
 	this->_capacity = n;
+	this->_size = tmpsize;
 }
 
 // ***************
@@ -81,7 +87,7 @@ void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::
 		first++;
 		it++;
 	}
-
+	//this->_size = tmp > this->_size ? this->_size : tmp;
 }
 
 template < class T, class Alloc>
@@ -89,6 +95,7 @@ void		vector<T, Alloc>::assign(size_type n, const value_type& val) {
 	this->reserve(n);
 	for (size_type i = 0; i < n; i++)
 		this->_data[i] = val;
+	//this->_size = n > this->_size ? this->_size : n;
 }
 
 template < class T, class Alloc>
@@ -101,7 +108,9 @@ void		vector<T, Alloc>::pop_back()
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::iterator	vector<T, Alloc>::insert(iterator position, const value_type& val) {
-	this->reserve(this->_size + 1);
+	difference_type  diff = position - this->begin();
+	this->resize(this->_size + 1);
+	position = this->begin() + diff;
 	*(position + 1) = *position;
 	*position = val;
 	return position;
@@ -110,8 +119,12 @@ typename vector<T, Alloc>::iterator	vector<T, Alloc>::insert(iterator position, 
 template < class T, class Alloc>
 void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type& val) {
 	difference_type  diff = position - this->begin();
-	this->reserve(this->_size + n);
+	this->resize(this->_size + n);
 	position = this->begin() + diff;
+
+	iterator ite = this->end();
+	for (difference_type i = 0; position + n + i != ite; i++)
+		*(position + n + i) = *(position + i);
 	while (n > 0)
 	{
 		*position = val;
@@ -125,11 +138,13 @@ template < class InputIterator>
 void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 	size_type diff = position - this->begin();
 	difference_type range = last - first;
+
 	this->resize(this->size() + range, 0);
 	position = this->begin() + diff;
 	iterator ite = this->end();
+
 	for (difference_type i = 0; position + range + i != ite; i++)
-		*(position + range) = *position;
+		*(position + range + i) = *(position + i);
 	while (first != last)
 	{
 		*position = *first;
@@ -174,6 +189,8 @@ void		vector<T, Alloc>::swap(vector& x)
 	x._size = tmp.size();
 	x._max_size = tmp.max_size();
 	x._data = tmp._data;
+
+	tmp._data = NULL;
 }
 
 template < class T, class Alloc>
