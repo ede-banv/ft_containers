@@ -38,22 +38,6 @@ struct iterator_traits<T*>
     typedef std::random_access_iterator_tag	iterator_category;
 };
 
-// -------- ENABLE IF
-template<bool, class T>
-struct enable_if {};
-template<class T>
-struct enable_if<true, T> { typedef T type; };
-
-// -------- IS INTEGRAL
-template <class T>
-struct is_integral {
-	const static bool value = false;
-};
-template <>
-struct is_integral<int> {
-	const static bool value = true;
-};
-
 }
 
 #endif
