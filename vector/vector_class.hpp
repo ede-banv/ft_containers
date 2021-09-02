@@ -175,7 +175,7 @@ class vector
 		}
 
 		vector& operator= (const vector& rhs);
-		vector (const vector& copy): _alloc(copy.get_allocator()), _capacity(0), _max_size(copy.max_size()) {	*this = copy;	}
+		vector (const vector& copy): _alloc(copy.get_allocator()), _capacity(0), _max_size(_alloc.max_size()) {	*this = copy;	}
 
 		virtual ~vector() {
 			this->clear();

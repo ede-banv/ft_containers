@@ -11,10 +11,7 @@ vector<T, Alloc>&	vector<T, Alloc>::operator=(const vector& rhs)
 	if (this == &rhs)
 		return *this;
 	this->clear();
-	//this->assign(rhs.begin(), rhs.end());
 	this->insert(this->begin(), rhs.begin(), rhs.end());
-	printf("\nCOPY size: %lu, capacity: %lu, max_size: %lu\n", rhs.size(), rhs.capacity(), rhs.max_size());
-	printf("\nNEW size: %lu, capacity: %lu, max_size: %lu\n", this->_size, this->_capacity, this->_max_size);
 	return (*this);
 }
 
@@ -42,7 +39,7 @@ void		vector<T, Alloc>::resize(size_type n, value_type val) {
 	else if (n > this->_size)
 	{
 		size_type	dcap = this->_capacity * 2;
-		this->reserve(this->_size <= dcap && n > this->_capacity ? dcap : n);
+		this->reserve(n <= dcap ? dcap : n);
 		for(size_type i = this->_size; i < n; i++)
 			this->_alloc.construct(&this->_data[i], val);
 		this->_size = n;
