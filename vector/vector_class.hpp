@@ -144,9 +144,12 @@ class vector
 			return(i);
 		}
 
-		void _stagger_vector(iterator position, size_type len) {
+		void _stagger_vector(iterator position, size_type len, size_type diff) {
 			for (difference_type i = 1; position + this->_size - i >= position + len; i++)
-				*(position + this->_size - i) = *(position + this->_size - len - i);
+			{
+				//std::cout<<"["<<(this->_size - i)<<"]\t["<<(this->_size - len  - i)<<"]\n";
+				*(position + this->_size - diff - i) = *(position + this->_size - diff - len - i);
+			}
 		}
 
 };

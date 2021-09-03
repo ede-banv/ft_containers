@@ -32,4 +32,4 @@
 *.app
 
 *.vscode*
-containers_test
+*containers_test*

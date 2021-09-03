@@ -108,8 +108,9 @@ void		vector<T, Alloc>::pop_back()
 
 template < class T, class Alloc>
 typename vector<T, Alloc>::iterator	vector<T, Alloc>::insert(iterator position, const value_type& val) {
+	difference_type diff = position - this->begin();
 	this->insert(position, 1, val);
-	return position;
+	return (this->begin() + diff);
 }
 
 template < class T, class Alloc>
@@ -117,7 +118,7 @@ void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type&
 	difference_type  diff = position - this->begin();
 	this->resize(this->_size + n, 0);
 	position = this->begin() + diff;
-	this->_stagger_vector(position, n);
+	this->_stagger_vector(position, n, diff);
 	while (n > 0)
 	{
 		*position = val;
@@ -136,7 +137,7 @@ void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename 
 	position = this->begin() + diff;
 	iterator ite = this->end();
 
-	this->_stagger_vector(position, range);
+	this->_stagger_vector(position, range, diff);
 	while (first != last)
 	{
 		*position = *first;
