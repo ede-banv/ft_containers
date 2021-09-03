@@ -136,6 +136,19 @@ class vector
 		size_type			_capacity;
 		size_type			_max_size;
 
+		template <class InputIterator>
+		size_t	_ite_diff(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
+			size_t	i = 0;
+			while (first + i != last)
+				i++;
+			return(i);
+		}
+
+		void _stagger_vector(iterator position, size_type len) {
+			for (difference_type i = 1; position + this->_size - i >= position + len; i++)
+				*(position + this->_size - i) = *(position + this->_size - len - i);
+		}
+
 };
 
 // ** RELATIONAL OPERATORS **
