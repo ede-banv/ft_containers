@@ -32,6 +32,7 @@ void		vector<T, Alloc>::resize(size_type n, value_type val) {
 	if (n < this->_size)
 	{
 		size_type tmp = n;
+
 		while (n < this->_size)
 			this->_alloc.destroy(&this->_data[n++]);
 		this->_size = tmp;

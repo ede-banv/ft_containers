@@ -16,8 +16,6 @@ random_access	-> , [] , = *it ,  *it = , ++ , -- , += , -= , + , - , == , != , <
 namespace ft
 {
 
-template <class T> class iterator_traits<const T*>;
-
 template<class Iterator>
 struct iterator_traits
 {
@@ -31,11 +29,23 @@ struct iterator_traits
 template<class T>
 struct iterator_traits<T*>
 {
-    typedef ptrdiff_t					difference_type;
-    typedef T							value_type;
-    typedef T*							pointer;
-    typedef T&							reference;
-    typedef std::random_access_iterator_tag	iterator_category;
+	typedef T											value_type;
+	typedef T*											pointer;
+	typedef T&											reference;
+	typedef	const T&									const_reference;
+	typedef ptrdiff_t									difference_type;
+	typedef typename std::random_access_iterator_tag	iterator_category;
+};
+
+template <class T>
+class iterator_traits<const T*>
+{
+	typedef T											value_type;
+	typedef T*											pointer;
+	typedef T&											reference;
+	typedef	const T&									const_reference;
+	typedef ptrdiff_t									difference_type;
+	typedef typename std::random_access_iterator_tag	iterator_category;
 };
 
 }

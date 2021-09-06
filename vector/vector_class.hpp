@@ -61,7 +61,8 @@ class vector
 			insert(begin(),first, last);
 		}
 
-		vector (const vector& copy): _alloc(copy.get_allocator()), _capacity(0), _max_size(_alloc.max_size()) {	*this = copy;	}
+		vector (const vector& copy): _alloc(copy.get_allocator()), _size(0), _capacity(0), _max_size(_alloc.max_size())
+		{	*this = copy;	}
 
 		virtual ~vector() {
 			clear();
