@@ -31,15 +31,36 @@ class vector
 				iterator(): RandIt<value_type>() {}
 				iterator(pointer ptr): RandIt<value_type>(ptr) {}
 				iterator(const iterator& copy) {	*this = copy;	}
+
+
+				iterator&	operator=(const iterator& rhs) {
+					if (this == &rhs)
+						return *this;
+					RandIt<value_type>::_ptr = rhs._ptr;
+					return (*this);
+				}
+
+				reference		operator[](size_type n) {	return RandIt<value_type>::_ptr[n];	}
+				const_reference operator[](size_type n) const {	return RandIt<value_type>::_ptr[n];	}
+				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
 			//private:
 				iterator(const RandIt<value_type>& copy): RandIt<value_type>(copy) {}
 		};
 
-		class const_iterator: public RandIt<const value_type> {
+		class const_iterator: public RandIt<value_type> {
 			public:
-				const_iterator(): RandIt<const value_type>() {}
-				const_iterator(pointer ptr): RandIt<const value_type>(ptr) {}
-				const_iterator(const RandIt<const value_type>& copy): RandIt<const value_type>(copy) {}
+				typedef const T&			reference;
+				typedef const T&			const_reference;
+				typedef	const value_type*	pointer;
+
+				const_iterator(): RandIt<value_type>() {}
+				const_iterator(value_type* ptr): RandIt<value_type>(ptr) {}
+				const_iterator(const RandIt<value_type>& copy): RandIt<value_type>(copy) {}
+
+				friend iterator	operator+(difference_type lhs, const const_iterator &rhs)
+				{	return rhs._ptr + lhs;	}
+				const_reference operator[](size_type n) const {	return RandIt<value_type>::_ptr[n];	}
+				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
 		};
 
 		// ** MEMBER FUNCTIONS **
