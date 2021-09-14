@@ -14,18 +14,13 @@ class RandIt {
 		typedef T								value_type;
 		typedef T*								pointer;
 		typedef T&								reference;
+		typedef const T&						const_reference;
 
 		RandIt(): _ptr(NULL) {}
 		RandIt(pointer ptr): _ptr(ptr) {}
 		RandIt(const RandIt& copy){	*this = copy;	}
 		virtual ~RandIt() {}
 
-		RandIt&	operator=(const RandIt& rhs) {
-			if (this == &rhs)
-				return *this;
-			_ptr = rhs._ptr;
-			return (*this);
-		}
 		RandIt&	operator++() {
 			_ptr++;
 			return (*this);
@@ -45,17 +40,21 @@ class RandIt {
 			return (tmp);
 		}
 
-		difference_type	operator-(const RandIt& rhs) {	return (_ptr - rhs._ptr);	}
-		RandIt			operator-(const difference_type& rhs) {	return (RandIt(_ptr - rhs));	}
-		RandIt			operator+(const difference_type& rhs) { return (RandIt(_ptr + rhs));	}
-		friend RandIt	operator+(const difference_type& lhs, const RandIt& rhs) {	return(rhs + lhs);	}
-		RandIt			operator-=(const difference_type& rhs) {	return (RandIt(_ptr - rhs));	}
-		RandIt			operator+=(const difference_type& rhs) {	return (RandIt(_ptr + rhs));	}
+		difference_type	operator-(const RandIt& rhs) const {	return (_ptr - rhs._ptr);	}
+		RandIt			operator-(const difference_type& rhs) const {	return (RandIt(_ptr - rhs));	}
+		RandIt			operator+(const difference_type& rhs) const { return (RandIt(_ptr + rhs));	}
+		friend RandIt	operator+(const difference_type& lhs, const RandIt& rhs) {	return(RandIt(rhs._ptr + lhs));	}
+		RandIt			operator-=(const difference_type& rhs) {
+			_ptr -= rhs;
+			return (*this);
+		}
+		RandIt			operator+=(const difference_type& rhs) {
+			_ptr += rhs;
+			return (*this);
+		}
 
 		reference		operator*() const {	return *_ptr;	}
 		pointer			operator->() const {	return _ptr;	}
-		reference		operator[](size_type n);
-		difference_type	operator[](const RandIt&) const;
 
 		bool		operator==(const RandIt& rhs) const {	return (_ptr == rhs._ptr);	}
 		bool		operator!=(const RandIt& rhs) const {	return (_ptr != rhs._ptr);	}

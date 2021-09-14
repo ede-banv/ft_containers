@@ -9,6 +9,7 @@
 # include "../iterator_traits.hpp"
 # include "../utils.hpp"
 # include "../randomiterator.hpp"
+# include "../reverseiterator.hpp"
 
 namespace ft {
 
@@ -63,6 +64,9 @@ class vector
 				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
 		};
 
+		ft::reverse_iterator<iterator> reverse_iterator;
+		class const_reverse_iterator: ft::reverse_iterator<const_iterator> {};
+
 		// ** MEMBER FUNCTIONS **
 		explicit vector (const allocator_type& alloc = allocator_type()):
 		_alloc(alloc), _size(0), _capacity(0)
@@ -90,7 +94,7 @@ class vector
 			_alloc.deallocate(_data, _capacity);
 		}
 
-		vector& operator= (const vector& rhs);
+		vector& operator=(const vector& rhs);
 
 		// ** CAPACITY **
 		size_type	size() const;
