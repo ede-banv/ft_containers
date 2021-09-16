@@ -10,16 +10,16 @@ template< class Iter >
 class reverse_iterator {
 	public:
 		typedef Iter													iterator_type;
-		typedef typename std::iterator_traits<Iter>::iterator_category	iterator_category;
-		typedef typename std::iterator_traits<Iter>::value_type			value_type;
-		typedef typename std::iterator_traits<Iter>::difference_type	difference_type;
-		typedef typename std::iterator_traits<Iter>::pointer			pointer;
-		typedef typename std::iterator_traits<Iter>::reference			reference;
+		typedef typename ft::iterator_traits<Iter>::iterator_category	iterator_category;
+		typedef typename ft::iterator_traits<Iter>::value_type			value_type;
+		typedef typename ft::iterator_traits<Iter>::difference_type	difference_type;
+		typedef typename ft::iterator_traits<Iter>::pointer			pointer;
+		typedef typename ft::iterator_traits<Iter>::reference			reference;
 
-		reverse_iterator(): _current() {}
-		explicit reverse_iterator(iterator_type x); _current(x) {}
+		reverse_iterator(): _current(iterator_type()) {}
+		explicit reverse_iterator(iterator_type x): _current(x) {}
 		template< class T >
-		reverse_iterator(const reverse_iterator<T>& copy) {	*this = copy;	}
+		reverse_iterator(const reverse_iterator<T>& copy): _current(copy.base()) {}
 
 		template< class T >
 		reverse_iterator&	operator=(const reverse_iterator<T>& rhs);
@@ -37,7 +37,7 @@ class reverse_iterator {
 		reverse_iterator&	operator+=(difference_type n) {	_current -= n;	return (*this);	}
 		reverse_iterator&	operator-=(difference_type n) {	_current += n;	return (*this);	}
 	protected:
-		Iter	_current;
+		iterator_type	_current;
 };
 
 // ** NON-MEMBER FUNCTIONS **

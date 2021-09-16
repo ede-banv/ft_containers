@@ -64,8 +64,8 @@ class vector
 				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
 		};
 
-		ft::reverse_iterator<iterator> reverse_iterator;
-		class const_reverse_iterator: ft::reverse_iterator<const_iterator> {};
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		// ** MEMBER FUNCTIONS **
 		explicit vector (const allocator_type& alloc = allocator_type()):
@@ -171,11 +171,8 @@ class vector
 		}
 
 		void _stagger_vector(iterator position, size_type len, size_type diff) {
-			for (difference_type i = 1; position + this->_size - i >= position + len; i++)
-			{
-				//std::cout<<"["<<(this->_size - i)<<"]\t["<<(this->_size - len  - i)<<"]\n";
+			for (difference_type i = 1; this->_size - i >= len + diff; i++)
 				*(position + this->_size - diff - i) = *(position + this->_size - diff - len - i);
-			}
 		}
 
 };

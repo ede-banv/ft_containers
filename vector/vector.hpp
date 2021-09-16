@@ -39,8 +39,9 @@ void		vector<T, Alloc>::resize(size_type n, value_type val) {
 	}
 	else if (n > this->_size)
 	{
-		size_type	dcap = this->_capacity * 2;
-		this->reserve(n <= dcap ? dcap : n);
+		size_type	dsize = this->_size * 2;
+		if (n > this->_capacity)
+			this->reserve(n < dsize ? dsize : n);
 		for(size_type i = this->_size; i < n; i++)
 			this->_alloc.construct(&this->_data[i], val);
 		this->_size = n;
