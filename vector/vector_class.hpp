@@ -37,14 +37,36 @@ class vector
 				iterator&	operator=(const iterator& rhs) {
 					if (this == &rhs)
 						return *this;
-					RandIt<value_type>::_ptr = rhs._ptr;
+					this->_ptr = rhs._ptr;
 					return (*this);
 				}
+				iterator&	operator++() {
+					this->_ptr++;
+					return (*this);
+				}
+				iterator	operator++(int) {
+					iterator tmp(*this);
+					++(*this);
+					return (tmp);
+				}
+				iterator&	operator--() {
+					this->_ptr--;
+					return (*this);
+				}
+				iterator	operator--(int) {
+					iterator tmp(*this);
+					--(*this);
+					return (tmp);
+				}
+				difference_type	operator-(const RandIt<value_type>& rhs) const {	return (RandIt<value_type>::operator-(rhs));	}
+				iterator		operator-(const difference_type& rhs) const {	return (iterator(this->_ptr - rhs));	}
+				iterator		operator+(const difference_type& rhs) const { return (iterator(this->_ptr + rhs));	}
+				friend iterator	operator+(const difference_type& lhs, const iterator& rhs) {	return(iterator(rhs._ptr + lhs));	}
 
-				reference		operator[](size_type n) {	return RandIt<value_type>::_ptr[n];	}
-				const_reference operator[](size_type n) const {	return RandIt<value_type>::_ptr[n];	}
+				reference		operator[](size_type n) {	return (this->_ptr[n]);	}
+				const_reference operator[](size_type n) const {	return (this->_ptr[n]);	}
 				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
-			//private:
+			private:
 				iterator(const RandIt<value_type>& copy): RandIt<value_type>(copy) {}
 		};
 
@@ -60,6 +82,7 @@ class vector
 
 				friend iterator	operator+(difference_type lhs, const const_iterator &rhs)
 				{	return rhs._ptr + lhs;	}
+				reference		operator*() const {	return *this->_ptr;	}
 				const_reference operator[](size_type n) const {	return RandIt<value_type>::_ptr[n];	}
 				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
 		};
@@ -91,7 +114,8 @@ class vector
 
 		virtual ~vector() {
 			clear();
-			_alloc.deallocate(_data, _capacity);
+			if (_capacity)
+				_alloc.deallocate(_data, _capacity);
 		}
 
 		vector& operator=(const vector& rhs);
@@ -135,7 +159,7 @@ class vector
 		void		push_back(const value_type& val);
 		void		pop_back();
 		iterator	insert(iterator position, const value_type& val);
-		void		insert(iterator position, size_type n, const value_type& val);
+		void		insert(iterator position, size_type $n, const value_type& val);
 		template <class InputIterator>
 		void		insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last);
 		iterator	erase(iterator position);
@@ -148,10 +172,10 @@ class vector
 		const_iterator			begin() const {	return (const_iterator(_data));	}
 		iterator				end() {	return (iterator(_data + _size));	}
 		const_iterator			end() const {	return (const_iterator(_data + _size));	}
-		reverse_iterator		rbegin() {	return(reverse_iterator(_data + _size));	}
-		const_reverse_iterator	rbegin() const {	return(const_reverse_iterator(_data + _size));	}
-		reverse_iterator		rend() {	return(reverse_iterator(_data));	}
-		const_reverse_iterator	rend() const {	return(const_reverse_iterator(_data));	}
+		reverse_iterator		rbegin() {	return(reverse_iterator(_data + _size - 1));	}
+		const_reverse_iterator	rbegin() const {	return(const_reverse_iterator(_data + _size - 1));	}
+		reverse_iterator		rend() {	return(reverse_iterator(_data - 1));	}
+		const_reverse_iterator	rend() const {	return(const_reverse_iterator(_data - 1));	}
 
 		// ** ALLOCATOR **
 		allocator_type get_allocator() const { return(_alloc);	}
@@ -165,14 +189,29 @@ class vector
 		template <class InputIterator>
 		size_t	_ite_diff(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 			size_t	i = 0;
-			while (first + i != last)
+			while (first != last)
+			{
+				first++;
 				i++;
+			}
 			return(i);
 		}
 
 		void _stagger_vector(iterator position, size_type len, size_type diff) {
 			for (difference_type i = 1; this->_size - i >= len + diff; i++)
 				*(position + this->_size - diff - i) = *(position + this->_size - diff - len - i);
+		}
+
+		template < class InputIterator >
+		size_type	_count_difference(InputIterator first, InputIterator last) {
+			size_type	count = 0;
+
+			while (first != last)
+			{
+				first++;
+				count++;
+			}
+			return (count);
 		}
 
 };

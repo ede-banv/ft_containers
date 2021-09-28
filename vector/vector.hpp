@@ -82,7 +82,7 @@ template < class T, class Alloc>
 template <class InputIterator>
 void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 	if (this->_ite_diff(first, last) > this->_size)
-		this->resize(last - first, 0);
+		this->resize(this->_count_difference(first, last), 0);
 	iterator	it = this->begin();
 	while (first != last)
 	{
@@ -133,7 +133,7 @@ template < class T, class Alloc>
 template < class InputIterator>
 void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
 	size_type diff = position - this->begin();
-	difference_type range = last - first;
+	difference_type range = this->_count_difference(first, last);
 
 	this->resize(this->size() + range, 0);
 	position = this->begin() + diff;
