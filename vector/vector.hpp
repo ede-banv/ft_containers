@@ -81,8 +81,7 @@ void		vector<T, Alloc>::reserve(size_type n) {
 template < class T, class Alloc>
 template <class InputIterator>
 void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
-	if (this->_ite_diff(first, last) > this->_size)
-		this->resize(this->_count_difference(first, last), 0);
+	this->resize(this->_count_difference(first, last), 0);
 	iterator	it = this->begin();
 	while (first != last)
 	{
@@ -94,8 +93,7 @@ void		vector<T, Alloc>::assign(InputIterator first, typename ft::enable_if<!ft::
 
 template < class T, class Alloc>
 void		vector<T, Alloc>::assign(size_type n, const value_type& val) {
-	if (n > this->_size)
-		this->resize(n, val);
+	this->resize(n, val);
 	for (size_type i = 0; i < n; i++)
 		this->_data[i] = val;
 }
