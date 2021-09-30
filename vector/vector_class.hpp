@@ -63,6 +63,7 @@ class vector
 				iterator		operator+(const difference_type& rhs) const { return (iterator(this->_ptr + rhs));	}
 				friend iterator	operator+(const difference_type& lhs, const iterator& rhs) {	return(iterator(rhs._ptr + lhs));	}
 
+				pointer			operator->() const {	return this->_ptr;	}
 				reference		operator[](size_type n) {	return (this->_ptr[n]);	}
 				const_reference operator[](size_type n) const {	return (this->_ptr[n]);	}
 				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
@@ -83,6 +84,7 @@ class vector
 				friend iterator	operator+(difference_type lhs, const const_iterator &rhs)
 				{	return rhs._ptr + lhs;	}
 				reference		operator*() const {	return *this->_ptr;	}
+				pointer			operator->() const {	return this->_ptr;	}
 				const_reference operator[](size_type n) const {	return RandIt<value_type>::_ptr[n];	}
 				difference_type	operator[](const RandIt<value_type>& rhs) const {	return (*this - rhs);	}
 		};
@@ -233,20 +235,16 @@ bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 
 template <class T, class Alloc>
 bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-	if (lhs.size() > rhs.size())
-		return false;
-	if (std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()))
-		return true;
-	return false;
+	return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 }
 
 template <class T, class Alloc>
 bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
-{	return (lhs < rhs || lhs == rhs ? true : false);	}
+{	return (rhs < lhs ? false : true);	}
 
 template <class T, class Alloc>
 bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
-{	return (lhs < rhs ? false : true);	}
+{	return (lhs <= rhs ? false : true);	}
 
 template <class T, class Alloc>
 bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
