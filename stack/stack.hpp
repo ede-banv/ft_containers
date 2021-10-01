@@ -24,7 +24,7 @@ class stack {
 			return (lhs._data == rhs._data); }
         friend bool operator<(const stack &lhs, const stack &rhs) {
 			return (lhs._data < rhs._data); }
-	private:
+	protected:
 		container_type	_data;
 };
 

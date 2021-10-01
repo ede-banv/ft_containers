@@ -1,7 +1,7 @@
 #ifndef __REVERSEIT__
 # define __REVERSEIT__
 
-# include "iterator_traits.hpp"
+# include "../iterator_traits.hpp"
 # include "randomiterator.hpp"
 
 namespace ft {
