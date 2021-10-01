@@ -78,7 +78,7 @@ bool operator>=(const reverse_iterator<Iter1>& lhs, const reverse_iterator<Iter2
 
 template <class Iter>
 reverse_iterator<Iter> operator+(typename reverse_iterator<Iter>::difference_type n, const reverse_iterator<Iter>& rhs) {
-	return (reverse_iterator<Iter>(rhs - n));
+	return (reverse_iterator<Iter>(rhs.base() - n));
 }
 
 template <class Iter1, class Iter2>
