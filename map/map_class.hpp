@@ -7,8 +7,15 @@
 
 namespace ft {
 
-template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key,T> > >
+template < class std::pair<const Key,T >
+struct s_node {
+	pair_type	value;
+	struct node* left;
+	struct node* right;
+	struct node* parent;
+};
 
+template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key,T> > >
 class map {
 
 	public:
@@ -26,14 +33,24 @@ class map {
 
 
 		// ** MEMBER FUNCTIONS **
-		explicit map(const key_compare& comp = key_compare(),
-              const allocator_type& alloc = allocator_type());
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):
+		, _root(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size()) {}
+
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last,
-			const key_compare& comp = key_compare(),
-			const allocator_type& alloc = allocator_type());
-		map(const map& x);
-		~map();
+		//map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+		map(const map& copy): _alloc(get_allocator()), _key_comp(comp), _size(size()), _max_size(max_size())
+		{
+			//*this = x
+			if (empty())
+			{
+				//put all binary tree
+			}
+			else
+			{
+				//clear
+				//put all binary tree
+			}
+		}
 
 		map& operator= (const map& x);
 
@@ -57,18 +74,20 @@ class map {
 		void clear();
 
 		// ** ITERATORS **
-		iterator begin();
-		const_iterator begin() const;
+		/*
+		iterator begin() {	return(iterator(_root));	}
+		const_iterator begin() const {	return(const_iterator(_root));	}
 		iterator end();
 		const_iterator end() const;
 		reverse_iterator rbegin();
 		const_reverse_iterator rbegin() const;
 		reverse_iterator rend();
 		const_reverse_iterator rend() const;
+		*/
 
 		// ** OBSRVERS **
-		key_compare key_comp() const;
-		value_compare value_comp() const;
+		key_compare key_comp() const {	return(_key_comp);	}
+		value_compare value_comp() const {	;	}
 
 		// ** OPERATIONS **
 		iterator find (const key_type& k);
@@ -84,7 +103,9 @@ class map {
 		// ** ALLOCATOR **
 		allocator_type get_allocator() const;
 	protected:
-		alllocator_type	_alloc;
+		s_node*			_root;
+		allocator_type	_alloc;
+		key_compare		_key_comp;
 		size_type		_size;
 		size_type		_max_size;
 };
