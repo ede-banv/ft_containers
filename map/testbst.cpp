@@ -15,7 +15,7 @@ s_node<pair_type>*	createNewNode(pair_type value)
 	newN->value = value;
 	newN->left = NULL;
 	newN->right = NULL;
-	newN->parent = NULL;
+	newN->parent = NULL; //is the reverse direction needed?
 	return (newN)
 }
 
@@ -32,18 +32,26 @@ s_node<pair_type>*	findKey(s_node<pair_type>*	start, pair_type value)
 }
 
 template < class pair_type>
-void	insertNode(s_node<pair_type>* newnode, pair_type value)
+bool	insertNode(s_node<pair_type>** root, pair_type value)
 {
-	if (!newnode)
-		newnode = createNewNode(value);
-	else if (value > newnode->value)
+	if (!*root)
 	{
-		insertNode(newnode->right, value)
-		newnode->right->parent = newnode;
+		*root = createNewNode(value);
+		return (true);
 	}
-	else if (value < newnode->value)
+	else if (*root->value == value)
+		return (true);
+	else if (value > *root->value)
 	{
-		insertNode(newnode->left, value);
-		newnode->left->parent = newnode;
+		insertNode(&root->right, value)
+		*root->right->parent = *root;
+		return (true);
 	}
+	else if (value < *root->value)
+	{
+		insertNode(&root->left, value);
+		*root->left->parent = *root;
+		return (true);
+	}
+	return (false);
 }
