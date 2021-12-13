@@ -55,9 +55,9 @@ class map {
 		map& operator= (const map& x);
 
 		// ** CAPACITY **
-		bool empty() const;
-		size_type size() const;
-		size_type max_size() const;
+		bool empty() const {	if (!_root) return (true); else return (false);	}
+		size_type size() const {	return (_size);	}
+		size_type max_size() const {	return (_max_size);	}
 
 		// ** ELEMENT ACCESS **
 		mapped_type& operator[] (const key_type& k);
@@ -101,7 +101,7 @@ class map {
 		const_iterator upper_bound (const key_type& k) const;
 
 		// ** ALLOCATOR **
-		allocator_type get_allocator() const;
+		allocator_type get_allocator() const {	return (_alloc);	}
 	protected:
 		s_node*			_root;
 		allocator_type	_alloc;
