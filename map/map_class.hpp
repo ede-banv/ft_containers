@@ -4,6 +4,9 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+# include "bidirectionaliterator.hpp"
+# include "../iterator_traits.hpp"
+# include "../utils.hpp"
 
 namespace ft {
 
@@ -31,6 +34,15 @@ class map {
 		typedef std::ptrdiff_t									difference_type;
 		typedef size_t											size_type;
 
+		class iterator: public BiDir<value_type> {
+			public:
+
+		}
+
+		class const_iterator: public BiDir<value_type> {
+			public:
+
+		}
 
 		// ** MEMBER FUNCTIONS **
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):
@@ -74,16 +86,15 @@ class map {
 		void clear();
 
 		// ** ITERATORS **
-		/*
+
 		iterator begin() {	return(iterator(_root));	}
 		const_iterator begin() const {	return(const_iterator(_root));	}
-		iterator end();
-		const_iterator end() const;
-		reverse_iterator rbegin();
-		const_reverse_iterator rbegin() const;
-		reverse_iterator rend();
-		const_reverse_iterator rend() const;
-		*/
+		iterator end() {	return(iterator(_root + _size));	}
+		const_iterator end() const {	return(const_iterator(_root + _size));	}
+		reverse_iterator rbegin() {	return(reverse_iterator(_root + _size - 1));	}
+		const_reverse_iterator rbegin() const {	return(const_reverse_iterator(_root + _size - 1));	}
+		reverse_iterator rend() {	return(reverse_iterator(_root - 1));	}
+		const_reverse_iterator rend() const {	return(const_reverse_iterator(_root - 1));	}
 
 		// ** OBSRVERS **
 		key_compare key_comp() const {	return(_key_comp);	}
