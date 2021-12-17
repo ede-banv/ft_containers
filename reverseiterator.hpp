@@ -1,8 +1,7 @@
 #ifndef __REVERSEIT__
 # define __REVERSEIT__
 
-# include "../iterator_traits.hpp"
-# include "randomiterator.hpp"
+# include "iterator_traits.hpp"
 
 namespace ft {
 
@@ -29,14 +28,14 @@ class reverse_iterator {
 			return (*this);
 		}
 		iterator_type		base() const {	return(_current);	}
-		reference			operator*() const {	return (*_current);	}
-		pointer				operator->() const {	return (_current.operator->());	}
+		reference			operator*() const {	return ((--iterator_type(_current)).operator*());	}
+		pointer				operator->() const {	return (&operator*());	}
 		reference			operator[](difference_type n) const {	return(*(*this + n));	}
 
 		reverse_iterator&	operator++() {	--_current;	return (*this);	}
 		reverse_iterator&	operator--() {	++_current;	return (*this);	}
-		reverse_iterator	operator++(int) {	return (reverse_iterator(--_current));	}
-		reverse_iterator	operator--(int) {	return (reverse_iterator(++_current));	}
+		reverse_iterator	operator++(int) {	return (reverse_iterator(_current--));	}
+		reverse_iterator	operator--(int) {	return (reverse_iterator(_current++));	}
 		reverse_iterator	operator+(difference_type n) const {	return (reverse_iterator(_current - n));	}
 		reverse_iterator	operator-(difference_type n) const {	return (reverse_iterator(_current + n));	}
 		reverse_iterator&	operator+=(difference_type n) {	_current -= n;	return (*this);	}

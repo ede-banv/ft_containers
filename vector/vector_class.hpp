@@ -8,7 +8,7 @@
 # include "../iterator_traits.hpp"
 # include "../utils.hpp"
 # include "randomiterator.hpp"
-# include "reverseiterator.hpp"
+# include "../reverseiterator.hpp"
 
 namespace ft {
 
@@ -173,10 +173,10 @@ class vector
 		const_iterator			begin() const {	return (const_iterator(_data));	}
 		iterator				end() {	return (iterator(_data + _size));	}
 		const_iterator			end() const {	return (const_iterator(_data + _size));	}
-		reverse_iterator		rbegin() {	return(reverse_iterator(_data + _size - 1));	}
-		const_reverse_iterator	rbegin() const {	return(const_reverse_iterator(_data + _size - 1));	}
-		reverse_iterator		rend() {	return(reverse_iterator(_data - 1));	}
-		const_reverse_iterator	rend() const {	return(const_reverse_iterator(_data - 1));	}
+		reverse_iterator		rbegin() {	return(reverse_iterator(_data + _size));	}
+		const_reverse_iterator	rbegin() const {	return(const_reverse_iterator(_data + _size));	}
+		reverse_iterator		rend() {	return(reverse_iterator(_data));	}
+		const_reverse_iterator	rend() const {	return(const_reverse_iterator(_data));	}
 
 		// ** ALLOCATOR **
 		allocator_type get_allocator() const { return(_alloc);	}
