@@ -4,13 +4,13 @@
 #include <iostream>
 #include <utility>
 #include <memory>
-# include "bidirectionaliterator.hpp"
+# include "bidirectionaliterators.hpp"
 # include "../iterator_traits.hpp"
 # include "../utils.hpp"
 
 namespace ft {
 
-template < class std::pair<const Key,T >
+template < class pair_type >
 struct s_node {
 	pair_type	value;
 	struct node* left;
@@ -41,7 +41,7 @@ class map {
 
 		class const_iterator: public BiDir<value_type> {
 			public:
-
+//a vuar
 		}
 
 		// ** MEMBER FUNCTIONS **
@@ -64,55 +64,55 @@ class map {
 			}
 		}
 
-		map& operator= (const map& x);
+		map&	operator=(const map& x);
 
 		// ** CAPACITY **
-		bool empty() const {	if (!_root) return (true); else return (false);	}
-		size_type size() const {	return (_size);	}
-		size_type max_size() const {	return (_max_size);	}
+		bool		empty() const {	if (!_root) return (true); else return (false);	}
+		size_type	size() const {	return (_size);	}
+		size_type	max_size() const {	return (_max_size);	}
 
 		// ** ELEMENT ACCESS **
-		mapped_type& operator[] (const key_type& k);
+		mapped_type&	operator[](const key_type& k);
 
 		// ** MODIFIERS **
-		pair<iterator,bool> insert (const value_type& val);
-		iterator insert (iterator position, const value_type& val);
+		pair<iterator,bool>	insert(const value_type& val);
+		iterator			insert(iterator position, const value_type& val);
 		template <class InputIterator>
-		void insert (InputIterator first, InputIterator last);
-		void erase (iterator position);
-		size_type erase (const key_type& k);
-		void erase (iterator first, iterator last);
-		void swap (map& x);
-		void clear();
+		void				insert(InputIterator first, InputIterator last);
+		void				erase(iterator position);
+		size_type			erase(const key_type& k);
+		void				erase(iterator first, iterator last);
+		void				swap (map& x);
+		void				clear();
 
 		// ** ITERATORS **
 
-		iterator begin() {	return(iterator(_root));	}
-		const_iterator begin() const {	return(const_iterator(_root));	}
-		iterator end() {	return(iterator(_root + _size));	}
-		const_iterator end() const {	return(const_iterator(_root + _size));	}
-		reverse_iterator rbegin() {	return(reverse_iterator(_root + _size - 1));	}
-		const_reverse_iterator rbegin() const {	return(const_reverse_iterator(_root + _size - 1));	}
-		reverse_iterator rend() {	return(reverse_iterator(_root - 1));	}
-		const_reverse_iterator rend() const {	return(const_reverse_iterator(_root - 1));	}
+		iterator				begin() {	return(iterator(_root));	}
+		const_iterator			begin() const {	return(const_iterator(_root));	}
+		iterator				end() {	return(iterator(_root + _size));	}
+		const_iterator			end() const {	return(const_iterator(_root + _size));	}
+		reverse_iterator		rbegin() {	return(reverse_iterator(_root + _size - 1));	}
+		const_reverse_iterator	rbegin() const {	return(const_reverse_iterator(_root + _size - 1));	}
+		reverse_iterator		rend() {	return(reverse_iterator(_root - 1));	}
+		const_reverse_iterator	rend() const {	return(const_reverse_iterator(_root - 1));	}
 
 		// ** OBSRVERS **
-		key_compare key_comp() const {	return(_key_comp);	}
-		value_compare value_comp() const {	;	}
+		key_compare		key_comp() const {	return(_key_comp);	}
+		value_compare	value_comp() const {	;	}
 
 		// ** OPERATIONS **
-		iterator find (const key_type& k);
-		const_iterator find (const key_type& k) const;
-		size_type count (const key_type& k) const;
-		iterator lower_bound (const key_type& k);
-		const_iterator lower_bound (const key_type& k) const;
-		iterator upper_bound (const key_type& k);
-		const_iterator upper_bound (const key_type& k) const;
-		iterator upper_bound (const key_type& k);
-		const_iterator upper_bound (const key_type& k) const;
+		iterator		find(const key_type& k);
+		const_iterator	find(const key_type& k) const;
+		size_type		count(const key_type& k) const;
+		iterator		lower_bound(const key_type& k);
+		const_iterator	lower_bound(const key_type& k) const;
+		iterator		upper_bound(const key_type& k);
+		const_iterator	upper_bound(const key_type& k) const;
+		iterator		upper_bound(const key_type& k);
+		const_iterator	upper_bound(const key_type& k) const;
 
 		// ** ALLOCATOR **
-		allocator_type get_allocator() const {	return (_alloc);	}
+		allocator_type	get_allocator() const {	return (_alloc);	}
 	protected:
 		s_node*			_root;
 		allocator_type	_alloc;
