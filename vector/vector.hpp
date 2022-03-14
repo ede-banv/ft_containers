@@ -130,14 +130,17 @@ void		vector<T, Alloc>::insert(iterator position, size_type	n, const value_type&
 template < class T, class Alloc>
 template < class InputIterator>
 void		vector<T, Alloc>::insert(iterator position, InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last) {
-	size_type diff = position - this->begin();
+	size_type 		diff = position - this->begin();
 	difference_type range = this->_count_difference(first, last);
+	difference_type	old_end = this->_count_difference(this->begin(), this->end());
 
 	this->resize(this->size() + range, 0);
 	position = this->begin() + diff;
-	iterator ite = this->end();
+	iterator	ite = this->end();
+	iterator	old_ite = this->begin() + old_end;
 
-	this->_stagger_vector(position, range, diff);
+	while (old_ite != position)
+		*--ite = *--old_ite;
 	while (first != last)
 	{
 		*position = *first;
