@@ -6,21 +6,21 @@
 namespace ft {
 
 	template < class Key, class T, class Compare, class Alloc >
-	map<Key, T, Compare, Alloc>	&map<Key, T, Compare, Alloc>::operator=(const map& x)
+	map<Key, T, Compare, Alloc>& map<Key, T, Compare, Alloc>::operator=(const map& x)
 	{
 		;
 	}
 
 	// ** ELEMENT ACCESS **
 	template < class Key, class T, class Compare, class Alloc >
-	map<Key, T, Compare, Alloc>::mapped_type	&map<Key, T, Compare, Alloc>::operator[] (const key_type& k)
+	map<Key, T, Compare, Alloc>::mapped_type&	map<Key, T, Compare, Alloc>::operator[] (const key_type& k)
 	{
 
 	}
 
 	// ** MODIFIERS **
 	template < class Key, class T, class Compare, class Alloc >
-	std::pair<typename map<Key, T, Compare, Alloc>::iterator,bool> map<Key, T, Compare, Alloc>::insert (const value_type& val)
+	std::pair<typename map<Key, T, Compare, Alloc>::iterator,bool> map<Key, T, Compare, Alloc>::insert(const value_type& val)
 	{
 		;
 	}
@@ -31,8 +31,8 @@ namespace ft {
 		;
 	}
 
-	template < class InputIterator >
 	template < class Key, class T, class Compare, class Alloc >
+	template < class InputIterator >
 	void map<Key, T, Compare, Alloc>::insert(InputIterator first, InputIterator last)
 	{
 		;
@@ -69,13 +69,13 @@ namespace ft {
 	}
 
 	// ** OBSRVERS **
-	template < class Key, class T, class Compare, class Alloc >
-	map<Key, T, Compare, Alloc>::key_compare map<Key, T, Compare, Alloc>::key_comp() const
-	{	return(_key_comp);	}
+//	template < class Key, class T, class Compare, class Alloc >
+//	map<Key, T, Compare, Alloc>::key_compare map<Key, T, Compare, Alloc>::key_comp() const
+//	{	return(_key_comp);	}
 
-	template < class Key, class T, class Compare, class Alloc >
-	typename map<Key, T, Compare, Alloc>::value_compare map<Key, T, Compare, Alloc>::value_comp() const
-	{	;	}
+//	template < class Key, class T, class Compare, class Alloc >
+//	typename map<Key, T, Compare, Alloc>::value_compare map<Key, T, Compare, Alloc>::value_comp() const
+//	{	;	}
 
 	// ** OPERATIONS **
 	template < class Key, class T, class Compare, class Alloc >
@@ -127,7 +127,7 @@ namespace ft {
 	}
 
 	template < class Key, class T, class Compare, class Alloc >
-	typename map<Key, T, Compare, Alloc>::const_iterator map<Key, T, Comapre, Alloc>::upper_bound(const key_type& k) const
+	typename map<Key, T, Compare, Alloc>::const_iterator map<Key, T, Compare, Alloc>::upper_bound(const key_type& k) const
 	{
 		;
 	}

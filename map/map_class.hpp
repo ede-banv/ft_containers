@@ -87,14 +87,14 @@ class map {
 
 		// ** ITERATORS **
 
-		iterator				begin() {	return(iterator(_root));	}
-		const_iterator			begin() const {	return(const_iterator(_root));	}
-		iterator				end() {	return(iterator(_root + _size));	}
-		const_iterator			end() const {	return(const_iterator(_root + _size));	}
-		reverse_iterator		rbegin() {	return(reverse_iterator(_root + _size - 1));	}
-		const_reverse_iterator	rbegin() const {	return(const_reverse_iterator(_root + _size - 1));	}
-		reverse_iterator		rend() {	return(reverse_iterator(_root - 1));	}
-		const_reverse_iterator	rend() const {	return(const_reverse_iterator(_root - 1));	}
+		iterator				begin() {	;	} //smallest: far left
+		const_iterator			begin() const {	;	} //idem
+		iterator				end() {	;	} //largest: far right
+		const_iterator			end() const {	;	} //idem
+		reverse_iterator		rbegin() {	;	} //largest
+		const_reverse_iterator	rbegin() const {	;	} //idem
+		reverse_iterator		rend() {	;	} //smallest
+		const_reverse_iterator	rend() const {	;	} //idem
 
 		// ** OBSRVERS **
 		key_compare		key_comp() const {	return(_key_comp);	}
