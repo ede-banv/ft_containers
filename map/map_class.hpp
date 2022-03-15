@@ -8,14 +8,25 @@
 # include "../iterator_traits.hpp"
 # include "../utils.hpp"
 
+# ifndef __APPLE__
+#  define __APPLE__ 0
+# endif
+
 namespace ft {
 
-template < class pair_type >
-struct s_node {
-	pair_type	value;
-	struct node* left;
-	struct node* right;
-	struct node* parent;
+template < class pair_type>
+struct s_node
+{
+	private:
+		bool _unused;
+		#if __APPLE__ == 0
+			int _unused_linux;
+		#endif
+	public:
+		pair_type	value;
+		s_node		*right;
+		s_node		*left;
+		s_node		*parent;
 };
 
 template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key,T> > >
@@ -114,11 +125,19 @@ class map {
 		// ** ALLOCATOR **
 		allocator_type	get_allocator() const {	return (_alloc);	}
 	protected:
-		s_node*			_root;
-		allocator_type	_alloc;
-		key_compare		_key_comp;
-		size_type		_size;
-		size_type		_max_size;
+		s_node<value_type>*	_root;
+		allocator_type		_alloc;
+		key_compare			_key_comp;
+		size_type			_size;
+		size_type			_max_size;
+
+		s_node<value_type>*	_ghost;
+
+		s_node<value_type>*	_newNode(value_type value);
+		void				_searchKey(s_node<value_type>** root, value_type key);
+		s_node<value_type>*	_findMaxKey(s_node<value_type>*node);
+		bool				_insertNode(s_node<value_type>* node, value_type value); //verify if value should be pair type
+		void				_deleteNode(s_node<value_type>* node, value_type key); //verify arg type
 };
 
 }

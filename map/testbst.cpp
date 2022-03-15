@@ -90,13 +90,13 @@ s_node<pair_type>*	findMaxKey(s_node<pair_type>* root)
 }
 
 template < class pair_type >
-void deleteNode(s_node<pair_type>* root, pair_type k)
+void deleteNode(s_node<pair_type>* root, pair_type key)
 //to verify: parent changed in case 3: enough?
 {
 	if (!root)
 		return;
 	s_node<pair_type>* curr = root;
-	searchKey(&curr, k);
+	searchKey(&curr, key);
 	std::cout << curr->value;
 	if (!curr)
 		return;
