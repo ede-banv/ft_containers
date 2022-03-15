@@ -91,7 +91,7 @@ s_node<pair_type>*	findMaxKey(s_node<pair_type>* root)
 
 template < class pair_type >
 void deleteNode(s_node<pair_type>* root, pair_type k)
-//to verify: parents need to be chaged!!!!! or else error. but how?
+//to verify: parent changed in case 3: enough?
 {
 	if (!root)
 		return;
@@ -134,6 +134,7 @@ void deleteNode(s_node<pair_type>* root, pair_type k)
 		}
 		else
 			root = curr->left ? curr->left : curr->right;
+		(curr->left ? curr->left : curr->right)->parent = curr->parent;
 		delete curr;
 	}
 
