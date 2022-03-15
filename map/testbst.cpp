@@ -142,18 +142,6 @@ void deleteNode(s_node<pair_type>* root, pair_type k)
 
 int main()
 {
-/*    int keys[] = { 15, 10, 20, 8, 12, 16 };
-
-    s_node<int>* root = NULL;
-    for (int i = 0; keys[i] ; i++) {
-        insertNode(&root, keys[i]);
-    }
-
-    deleteNode(root, 16);
-    inOrder(&root);
-
-    return 0;
-*/
 	s_node<int>* root = NULL;
 	insertNode(&root, 50);
 	insertNode(&root, 30);
