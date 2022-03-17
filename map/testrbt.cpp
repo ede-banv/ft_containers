@@ -10,6 +10,23 @@ struct s_node {
 };
 
 template < class T >
+s_node<T>*	searchNode(s_node<T>* root, T key)
+{
+	s_node<T>*	res = NULL;
+
+	while (root)
+	{
+		if (node->data == key)
+			res = node;
+		else if (node->data > key)
+			node = node->left;
+		else
+			node = node->right;
+	}
+	return (res);
+}
+
+template < class T >
 s_node<T>*	createNewNode(T value)
 {
 	s_node<T>* newN = new s_node<T>; //alloc unsure
@@ -84,7 +101,7 @@ void	insertNode(s_node<T>*	root, T value)
 			node->parent->left = node;
 		else
 			node->parent->right = node;
-		//insertfix
+		insertFix(root, node);
 	}
 }
 
@@ -143,4 +160,56 @@ void	insertFix(s_node<T>* root, s_node<T>* node)
 			break;
 	}
 	root->color = 'b';
+}
+
+template < class T >
+void	rbTransplant(s_node<T>* root, s_node<T>* u, s_node<T>* v)
+{
+	if (!u->parent)
+		root = v;
+	else if (u == u->parent->left)
+		u->parent->left = v;
+	else
+		u->parent->right = v;
+	v->parent = u->parent;
+}
+
+template < class T >
+void	deleteNode(s_node<T>* root, T key)
+{
+	s_node<T>* x, y;
+	s_node<T>* tmp = searchNode(root, key);
+	y = tmp;
+	char ogcolor = y->color;
+
+	if (!tmp->left)
+	{
+		x = tmp->right;
+		rbTransplant(root, tmp, tmp->right);
+	}
+	else if (!tmp->right)
+	{
+		x = tmp->left;
+		rbTransplant(root, tmp, tmp->left);
+	}
+	else
+	{
+		//y = tree minimum (tmp->right)
+		ogcolor = y->color;
+		x = y->right;
+		if (y->parent == tmp)
+			x->parent = y;
+		else
+		{
+			rbTransplant(root, y, y->right);
+			y->right = tmp->right;
+			y->right->parent = y;
+		}
+		rbTransplant(root, tmp, y);
+		y->left = tmp->left;
+		y->left->parent = y;
+		y->color = tmp->color;
+	}
+	if (ogcolor == 'b')
+		//deleteFix
 }
