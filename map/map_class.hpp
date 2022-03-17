@@ -24,6 +24,7 @@ struct s_node
 		#endif
 	public:
 		pair_type	value;
+		char		color;
 		s_node		*right;
 		s_node		*left;
 		s_node		*parent;
@@ -125,11 +126,12 @@ class map {
 		// ** ALLOCATOR **
 		allocator_type	get_allocator() const {	return (_alloc);	}
 	protected:
-		s_node<value_type>*	_root;
-		allocator_type		_alloc;
-		key_compare			_key_comp;
-		size_type			_size;
-		size_type			_max_size;
+		s_node<value_type>*					_root;
+		allocator_type						_allocp;
+		std::allocator<s_node<value_type>	_allocn;
+		key_compare							_key_comp;
+		size_type							_size;
+		size_type							_max_size;
 
 		s_node<value_type>*	_ghost;
 

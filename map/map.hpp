@@ -9,9 +9,12 @@ template < class Key, class T, class Compare, class Alloc >
 s_node<typename map<Key, T, Compare, Alloc>::value_type>*	map<Key, T, Compare, Alloc>::_newNode(value_type value)
 {
 	//allocate
-	//s_node<value_type>* newN = new s_node<value_type>;
+	s_node<value_type>* newN = this->_allocn(1);
+	if (newN)
+		this->_allocp(newN->value, value);
 
 	newN->value = value;
+	newN->color = 'r';
 	newN->left = NULL;
 	newN->right = NULL;
 	newN->parent = NULL;
