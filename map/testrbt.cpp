@@ -10,18 +10,34 @@ struct s_node {
 };
 
 template < class T >
+s_node<T>*	findMin(s_node<T>* node)
+{
+	while (node->left)
+		node = node->left;
+	return (node);
+}
+
+template < class T >
+s_node<T>*	findMax(s_node<T>* node)
+{
+	while (node->right)
+		node =  node->right;
+	return (node);
+}
+
+template < class T >
 s_node<T>*	searchNode(s_node<T>* root, T key)
 {
 	s_node<T>*	res = NULL;
 
 	while (root)
 	{
-		if (node->data == key)
-			res = node;
-		else if (node->data > key)
-			node = node->left;
+		if (root->value == key)
+			res = root;
+		else if (root->value > key)
+			root = root->left;
 		else
-			node = node->right;
+			root = root->right;
 	}
 	return (res);
 }
@@ -48,7 +64,7 @@ void	leftRotate(s_node<T>* root, s_node<T>* x)
 		y->left->parent = x;
 	y->parent = x->parent;
 	if (!x->parent)
-		root- = y;
+		root = y;
 	else if (x == x->parent->left)
 		x->parent->right = y;
 	else
@@ -61,48 +77,18 @@ void	leftRotate(s_node<T>* root, s_node<T>* x)
 template < class T >
 void	rightRotate(s_node<T>* root, s_node<T>* x)
 {
-	s_node<T>*	y;
+	s_node<T>*	y = NULL;
 	y->left = x->right;
 	if (x->right)
 		x->right->parent = y;
 	if (!y->parent)
 		root = x;
 	else if (y == y->parent->right)
-		y->parent->right = x
+		y->parent->right = x;
 	else
 		y->parent->left = y;
 	x->right = y;
 	y->parent = x;
-}
-
-template < class T >
-void	insertNode(s_node<T>*	root, T value)
-{
-	s_node<T>*	node = createNewNode(value);
-	if (!root)
-	{
-		root = node;
-		root->color = 'b';
-		root->parent = NULL;
-	}
-	else
-	{
-		while (root)
-		{
-			if (node->value > root->value)
-				root = root->right;
-			else if (node->value < root->value)
-				root = root->left;
-			else
-				return;
-			root->parent = node->parent;
-		}
-		if (node->parent->value > node->value)
-			node->parent->left = node;
-		else
-			node->parent->right = node;
-		insertFix(root, node);
-	}
 }
 
 template < class T >
@@ -131,7 +117,7 @@ void	insertFix(s_node<T>* root, s_node<T>* node)
 				}
 				node->parent->color = 'b'; //node parent black
 				y->parent->color = 'r'; //node gp red
-				rightRotate(root, y->parent)//rightrot gp
+				rightRotate(root, y->parent);//rightrot gp
 			}
 		}
 		else if (node->parent == node->parent->parent->right)
@@ -146,20 +132,50 @@ void	insertFix(s_node<T>* root, s_node<T>* node)
 			}
 			else
 			{
-				if (node == node->parent->right) //if node to right of parent
+				if (node == node->parent->left) //if node to left of parent
 				{
 					node = node->parent; //assign parent to newnode (???)
-					leftRotate(root, node); //leftrot node
+					rightRotate(root, node); //rightrot node
 				}
 				node->parent->color = 'b'; //node parent black
 				y->parent->color = 'r'; //node gp red
-				rightRotate(root, y->parent)//rightrot gp
+				leftRotate(root, y->parent);//leftrot gp
 			}
 		}
 		if (node == root)
 			break;
 	}
 	root->color = 'b';
+}
+
+template < class T >
+void	insertNode(s_node<T>**	root, T value)
+{
+	s_node<T>*	node = createNewNode(value);
+	if (!root)
+	{
+		*root = node;
+		(*root)->color = 'b';
+		(*root)->parent = NULL;
+	}
+	else
+	{
+		while (*root)
+		{
+			if (node->value > (*root)->value)
+				*root = (*root)->right;
+			else if (node->value < (*root)->value)
+				(*root) = (*root)->left;
+			else
+				return;
+			(*root)->parent = node->parent;
+		}
+		if (node->parent->value > node->value)
+			node->parent->left = node;
+		else
+			node->parent->right = node;
+		insertFix(*root, node);
+	}
 }
 
 template < class T >
@@ -175,9 +191,82 @@ void	rbTransplant(s_node<T>* root, s_node<T>* u, s_node<T>* v)
 }
 
 template < class T >
+void	deleteFix(s_node<T>* root, s_node<T>*  node)
+{
+	s_node<T>* w = NULL;
+	while (node != root && node->color == 'b')
+	{
+		if (node == node->parent->left)
+		{
+			w = node->parent->right;
+			if (w->color == 'r')
+			{
+				w->color = 'b';
+				node->parent->color = 'r';
+				leftRotate(root, node->parent);
+				w = node->parent->right;
+			}
+			if (w->left->color == 'b' && w->right->color == 'b')
+			{
+				w->color = 'r';
+				node = node->parent;
+			}
+			else
+			{
+				if (w->right->color == 'b')
+				{
+					w->left->color =  'b';
+					w->color = 'r';
+					rightRotate(root, w);
+					w = node->parent->right;
+				}
+				w->color = node->parent->color;
+				node->parent->color = 'b';
+				w->right->color = 'b';
+				leftRotate(root, node->parent);
+				node = root;
+			}
+		}
+		else
+		{
+			w = node->parent->left;
+			if (w->color == 'r')
+			{
+				w->color = 'b';
+				node->parent->color = 'r';
+				rightRotate(root, node->parent);
+				w = node->parent->left;
+			}
+			if (w->right->color == 'b' && w->left->color == 'b')
+			{
+				w->color = 'r';
+				node = node->parent;
+			}
+			else
+			{
+				if (w->left->color == 'b')
+				{
+					w->right->color =  'b';
+					w->color = 'r';
+					leftRotate(root, w);
+					w = node->parent->left;
+				}
+				w->color = node->parent->color;
+				node->parent->color = 'b';
+				w->left->color = 'b';
+				rightRotate(root, node->parent);
+				node = root;
+			}
+		}
+	}
+	root->color = 'b';
+}
+
+template < class T >
 void	deleteNode(s_node<T>* root, T key)
 {
-	s_node<T>* x, y;
+	s_node<T>* x, *y;
+	x = y = NULL;
 	s_node<T>* tmp = searchNode(root, key);
 	y = tmp;
 	char ogcolor = y->color;
@@ -194,7 +283,7 @@ void	deleteNode(s_node<T>* root, T key)
 	}
 	else
 	{
-		//y = tree minimum (tmp->right)
+		y = findMin(tmp->right);
 		ogcolor = y->color;
 		x = y->right;
 		if (y->parent == tmp)
@@ -210,6 +299,47 @@ void	deleteNode(s_node<T>* root, T key)
 		y->left->parent = y;
 		y->color = tmp->color;
 	}
+	delete tmp;
 	if (ogcolor == 'b')
-		//deleteFix
+		deleteFix(root, x);
+}
+
+template < class T >
+void	printTree(s_node<T>* root, std::string indent, bool last)
+{
+	if (root)
+	{
+		if (root != NULL) {
+			std::cout << indent;
+			if (last) {
+			std::cout << "R----";
+			indent += "   ";
+		} else {
+			std::cout << "L----";
+			indent += "|  ";
+		}
+
+		std::string sColor = root->color == 'r' ? "RED" : "BLACK";
+		std::cout << root->value << "(" << sColor << ")" << std::endl;
+ 		printTree(root->left, indent, false);
+		printTree(root->right, indent, true);
+    }
+	}
+}
+
+
+int main() {
+	s_node<int>* root = NULL;
+	insertNode(&root, 55);
+	insertNode(&root, 40);
+	insertNode(&root, 65);
+	insertNode(&root, 60);
+	insertNode(&root, 75);
+	insertNode(&root, 57);
+
+	printTree(root, "", true);
+	std::cout << std::endl
+		 << "After deleting" << std::endl;
+	deleteNode(root, 40);
+	printTree(root, "", true);
 }
