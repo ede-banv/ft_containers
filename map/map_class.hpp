@@ -133,13 +133,18 @@ class map {
 		size_type							_size;
 		size_type							_max_size;
 
-		s_node<value_type>*	_ghost;
+		s_node<value_type>*					_Tnull;
 
 		s_node<value_type>*	_newNode(value_type value);
 		void				_searchKey(s_node<value_type>** root, value_type key);
 		s_node<value_type>*	_findMaxKey(s_node<value_type>*node);
-		bool				_insertNode(s_node<value_type>* node, value_type value); //verify if value should be pair type
+		void				_leftRotate(s_node<value_type>* node);
+		void				_rightRotate(s_node<value_type>* node);
+		void				_insertNode(s_node<value_type>* node, value_type value); //verify if value should be pair type
+		void				_insertFix(s_node<value_type>* node);
+		void				_rbTransplant(s_node<value_type>* u, s_node<value_type>* v);
 		void				_deleteNode(s_node<value_type>* node, value_type key); //verify arg type
+		void				_deleteFix(s_node<value_type>* node);
 };
 
 }

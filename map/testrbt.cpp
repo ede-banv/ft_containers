@@ -33,7 +33,10 @@ s_node<T>*	searchNode(s_node<T>* root, T key)
 	while (root)
 	{
 		if (root->value == key)
+		{
 			res = root;
+			break ;
+		}
 		else if (root->value > key)
 			root = root->left;
 		else
@@ -58,6 +61,7 @@ s_node<T>*	createNewNode(T value)
 template < class T >
 void	leftRotate(s_node<T>* root, s_node<T>* x)
 {
+	std::cout << "l\n";
 	s_node<T>*	y = x->right;
 	x->right = y->left;
 	if (y->left)
@@ -77,6 +81,7 @@ void	leftRotate(s_node<T>* root, s_node<T>* x)
 template < class T >
 void	rightRotate(s_node<T>* root, s_node<T>* x)
 {
+	std::cout << "r\n";
 	s_node<T>*	y = NULL;
 	y->left = x->right;
 	if (x->right)
@@ -92,63 +97,98 @@ void	rightRotate(s_node<T>* root, s_node<T>* x)
 }
 
 template < class T >
-void	insertFix(s_node<T>* root, s_node<T>* node)
+void	insertFix(s_node<T>* root, s_node<T>** node)
 {
 	s_node<T>*	y = NULL;
 
-	while (node->parent->color == 'r') //while parent is red
+	while ((*node)->parent->color == 'r') //while parent is red
 	{
-		if (node->parent == node->parent->parent->left) //if parent is left of gp
+		std::cout << "while\n";
+		if ((*node)->parent == (*node)->parent->parent->left) //if parent is left of gp
 		{
-			y = node->parent->parent->right; //uncle
+			y = (*node)->parent->parent->right; //uncle
 			if (y->color == 'r') //if uncle is red
 			{
-				node->parent->color = 'b'; //both parent
+				(*node)->parent->color = 'b'; //both parent
 				y->color = 'b'; //and uncle become black
-				node->parent->parent->color = 'r'; //and gp becomes black
-				node = y->parent; //assign gp to newnode (???)
+				(*node)->parent->parent->color = 'r'; //and gp becomes black
+				*node = y->parent; //assign gp to new*node (???)
 			}
 			else
 			{
-				if (node == node->parent->right) //if node to right of parent
+				if (*node == (*node)->parent->right) //if *node to right of parent
 				{
-					node = node->parent; //assign parent to newnode (???)
-					leftRotate(root, node); //leftrot node
+					*node = (*node)->parent; //assign parent to new*node (???)
+					leftRotate(root, *node); //leftrot *node
 				}
-				node->parent->color = 'b'; //node parent black
-				y->parent->color = 'r'; //node gp red
+				(*node)->parent->color = 'b'; //*node parent black
+				y->parent->color = 'r'; //*node gp red
 				rightRotate(root, y->parent);//rightrot gp
 			}
 		}
-		else if (node->parent == node->parent->parent->right)
+		else if ((*node)->parent == (*node)->parent->parent->right)
 		{
-			y = node->parent->parent->left;
+			y = (*node)->parent->parent->left;
 			if (y->color == 'r') //if uncle is red
 			{
-				node->parent->color = 'b'; //both parent
+				(*node)->parent->color = 'b'; //both parent
 				y->color = 'b'; //and uncle become black
-				node->parent->parent->color = 'r'; //and gp becomes black
-				node = y->parent; //assign gp to newnode (???)
+				(*node)->parent->parent->color = 'r'; //and gp becomes black
+				*node = y->parent; //assign gp to new*node (???)
 			}
 			else
 			{
-				if (node == node->parent->left) //if node to left of parent
+				if (*node == (*node)->parent->left) //if *node to left of parent
 				{
-					node = node->parent; //assign parent to newnode (???)
-					rightRotate(root, node); //rightrot node
+					*node = (*node)->parent; //assign parent to new*node (???)
+					rightRotate(root, *node); //rightrot *node
 				}
-				node->parent->color = 'b'; //node parent black
-				y->parent->color = 'r'; //node gp red
+				(*node)->parent->color = 'b'; //*node parent black
+				y->parent->color = 'r'; //*node gp red
 				leftRotate(root, y->parent);//leftrot gp
 			}
 		}
-		if (node == root)
+		if (*node == root)
 			break;
 	}
 	root->color = 'b';
 }
 
 template < class T >
+void	insertNode(s_node<T>** root, T value)
+{
+	s_node<T>*	node = createNewNode(value);
+	s_node<T>*	x = *root;
+	s_node<T>*	tmp = NULL;
+
+	if (!*root)
+	{
+		*root = node;
+		(*root)->color = 'b';
+		(*root)->parent = NULL; //Tnull
+		return ;
+	}
+	else
+	{
+		while (x)
+		{
+			tmp = x;
+			if (node->value > x->value)
+				x = x->right;
+			else
+				x = x->left;
+		}
+		node->parent = tmp;
+		if (node->value > tmp->value)
+			tmp->right = node;
+		else
+			tmp->left = node;
+		if (node->parent->parent == NULL)
+			return ;
+		insertFix(*root, &node);
+	}
+}
+/*template < class T >
 void	insertNode(s_node<T>**	root, T value)
 {
 	s_node<T>*	node = createNewNode(value);
@@ -176,26 +216,30 @@ void	insertNode(s_node<T>**	root, T value)
 			node->parent->right = node;
 		insertFix(*root, node);
 	}
-}
+}*/
 
 template < class T >
-void	rbTransplant(s_node<T>* root, s_node<T>* u, s_node<T>* v)
+void	rbTransplant(s_node<T>** root, s_node<T>* u, s_node<T>* v)
 {
 	if (!u->parent)
-		root = v;
+		*root = v;
 	else if (u == u->parent->left)
 		u->parent->left = v;
 	else
 		u->parent->right = v;
-	v->parent = u->parent;
+	if (v && u)
+		v->parent = u->parent;
 }
 
 template < class T >
 void	deleteFix(s_node<T>* root, s_node<T>*  node)
 {
 	s_node<T>* w = NULL;
-	while (node != root && node->color == 'b')
+	if (!node)
+		std::cout <<"sexy\n";
+	while (node != root && node && node->color == 'b')
 	{
+		std::cout << "mdr\n";
 		if (node == node->parent->left)
 		{
 			w = node->parent->right;
@@ -224,7 +268,7 @@ void	deleteFix(s_node<T>* root, s_node<T>*  node)
 				node->parent->color = 'b';
 				w->right->color = 'b';
 				leftRotate(root, node->parent);
-				node = root;
+				*node = *root;
 			}
 		}
 		else
@@ -263,26 +307,32 @@ void	deleteFix(s_node<T>* root, s_node<T>*  node)
 }
 
 template < class T >
-void	deleteNode(s_node<T>* root, T key)
+void	deleteNode(s_node<T>** root, T key)
 {
 	s_node<T>* x, *y;
 	x = y = NULL;
-	s_node<T>* tmp = searchNode(root, key);
+	s_node<T>* tmp = searchNode(*root, key);
+	//cdt if no tmp
 	y = tmp;
 	char ogcolor = y->color;
 
+	//std::cout << "lol " << tmp->value << "\n";
 	if (!tmp->left)
 	{
-		x = tmp->right;
+		x = tmp->right; //this is NULL, but why? TNULL? but Tnull doesnt hve a parent
 		rbTransplant(root, tmp, tmp->right);
+		std::cout << "lol1\n";
+		std::cout << x->value << std::endl;
 	}
 	else if (!tmp->right)
 	{
+		std::cout << "lol2\n";
 		x = tmp->left;
 		rbTransplant(root, tmp, tmp->left);
 	}
 	else
 	{
+		std::cout << "lol3\n";
 		y = findMin(tmp->right);
 		ogcolor = y->color;
 		x = y->right;
@@ -300,8 +350,9 @@ void	deleteNode(s_node<T>* root, T key)
 		y->color = tmp->color;
 	}
 	delete tmp;
+	//std::cout<<"xd " << x->value << " \n";
 	if (ogcolor == 'b')
-		deleteFix(root, x);
+		deleteFix(*root, x);
 }
 
 template < class T >
@@ -340,6 +391,6 @@ int main() {
 	printTree(root, "", true);
 	std::cout << std::endl
 		 << "After deleting" << std::endl;
-	deleteNode(root, 40);
+	deleteNode(&root, 40);
 	printTree(root, "", true);
 }
