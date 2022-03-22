@@ -9,22 +9,30 @@ template < class Key, class T, class Compare, class Alloc >
 s_node<typename map<Key, T, Compare, Alloc>::value_type>*	map<Key, T, Compare, Alloc>::_newNode(value_type value)
 {
 	//allocate
+	if (!this->_Tnull)
+	{
+		this->_Tnull = this->_allocn(1);
+		if (this->_Tnull)
+			this->_allocp(this->_Tnull->value, NULL);
+		this->_Tnull->color = 'b';
+		this->_Tnull->left = this->_Tnull->right = this->_Tnull->parent = NULL;
+	}
 	s_node<value_type>* newN = this->_allocn(1);
 	if (newN)
 		this->_allocp(newN->value, value);
 
 	newN->value = value;
 	newN->color = 'r';
-	newN->left = NULL;
-	newN->right = NULL;
-	newN->parent = NULL;
+	newN->left = this->_Tnull; //tthis->_Tnull ctrl c ctrlv
+	newN->right = this->_Tnull;
+	newN->parent = this->_Tnull;
 	return (newN);
 }
 
 template < class Key, class T, class Compare, class Alloc >
 void	map<Key, T, Compare, Alloc>::_searchKey(s_node<value_type>** root, value_type key)
 {
-	while (*root && (*root)->value != key)
+	while (*root != && (*root)->value != key)
 	{
 		if (key < (*root)->value)
 			*root = (*root)->left;
@@ -53,9 +61,7 @@ void	map<Key, T, Compare, Alloc>::_insertNode(s_node<value_type>* node, value_ty
 	if  (!this->_root)
 	{
 		this->_root = node;
-		this->_Tnull = this->_newNode(NULL);
 		this->_root->color = 'b';
-		this->_Tnull->color = 'b';
 		this->_root->parent = this->_Tnull;
 		this->_root->left = this->_Tnull;
 		this->_root->right = this->_Tnull;
@@ -66,13 +72,13 @@ void	map<Key, T, Compare, Alloc>::_insertNode(s_node<value_type>* node, value_ty
 		while (x != this->_Tnull)
 		{
 			tmp = x;
-			if (node->value > x->value)
+			if (node->value > x->value)//compare use
 				x = x->right;
 			else
 				x = x->left
 		}
 		node->parent = tmp;
-		if (node->value > tmp->value)
+		if (node->value > tmp->value) //comparr use
 			tmp->right = node;
 		else
 			tmp->left = node;
