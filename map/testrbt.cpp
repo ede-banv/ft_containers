@@ -70,7 +70,7 @@ void	leftRotate(s_node<T>* root, s_node<T>* x)
 	if (!x->parent)
 		root = y;
 	else if (x == x->parent->left)
-		x->parent->right = y;
+		x->parent->left = y;
 	else
 		x->parent->right = y;
 	y->left = x;
@@ -82,18 +82,19 @@ template < class T >
 void	rightRotate(s_node<T>* root, s_node<T>* x)
 {
 	std::cout << "r\n";
-	s_node<T>*	y = NULL;
+	s_node<T>*	y = x->left;
 	y->left = x->right;
-	if (x->right)
-		x->right->parent = y;
-	if (!y->parent)
-		root = x;
-	else if (y == y->parent->right)
-		y->parent->right = x;
+	if (y->right)
+		y->right->parent = x;
+	y->parent = x->parent;
+	if (!x->parent)
+		root = y;
+	else if (x == x->parent->right)
+		x->parent->right = y;
 	else
-		y->parent->left = y;
-	x->right = y;
-	y->parent = x;
+		x->parent->left = y;
+	y->right = x;
+	x->parent = y;
 }
 
 template < class T >
@@ -112,7 +113,7 @@ void	insertFix(s_node<T>* root, s_node<T>** node)
 				(*node)->parent->color = 'b'; //both parent
 				y->color = 'b'; //and uncle become black
 				(*node)->parent->parent->color = 'r'; //and gp becomes black
-				*node = y->parent; //assign gp to new*node (???)
+				*node = (*node)->parent->parent; //assign gp to new*node (???)
 			}
 			else
 			{
@@ -122,7 +123,7 @@ void	insertFix(s_node<T>* root, s_node<T>** node)
 					leftRotate(root, *node); //leftrot *node
 				}
 				(*node)->parent->color = 'b'; //*node parent black
-				y->parent->color = 'r'; //*node gp red
+				(*node)->parent->parent->color = 'r'; //*node gp red
 				rightRotate(root, y->parent);//rightrot gp
 			}
 		}
@@ -134,7 +135,7 @@ void	insertFix(s_node<T>* root, s_node<T>** node)
 				(*node)->parent->color = 'b'; //both parent
 				y->color = 'b'; //and uncle become black
 				(*node)->parent->parent->color = 'r'; //and gp becomes black
-				*node = y->parent; //assign gp to new*node (???)
+				*node = (*node)->parent->parent; //assign gp to new*node (???)
 			}
 			else
 			{
@@ -144,7 +145,7 @@ void	insertFix(s_node<T>* root, s_node<T>** node)
 					rightRotate(root, *node); //rightrot *node
 				}
 				(*node)->parent->color = 'b'; //*node parent black
-				y->parent->color = 'r'; //*node gp red
+				(*node)->parent->parent->color = 'r'; //*node gp red
 				leftRotate(root, y->parent);//leftrot gp
 			}
 		}
