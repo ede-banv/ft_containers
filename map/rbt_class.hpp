@@ -2,6 +2,7 @@
 # define __RBT_CLASS__
 
 # include <iostream>
+# include "../utils.hpp"
 
 # ifndef __APPLE__
 #  define __APPLE__ 0
@@ -25,24 +26,27 @@ struct s_node
 
 };
 
-template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key,T> > >
+template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
 class rb_tree {
 	public:
 		typedef Key												key_type;
 		typedef T												mapped_type;
-		typedef std::pair<const key_type, mapped_type>			value_type;
+		typedef ft::pair<const key_type, mapped_type>			value_type;
 		typedef	Compare											key_compare;
-		typedef Alloc											allocator_type;
-		typedef typename std::allocator_type::reference			reference;
-		typedef typename std::allocator_type::const_reference	const_reference;
-		typedef typename std::allocator_type::pointer			pointer;
-		typedef typename std::allocator_type::const_pointer		const_pointer;
+		typedef std::allocator< ft::pair< const Key, T > >			allocator_type;
+		typedef typename allocator_type::reference				reference;
+		typedef typename allocator_type::const_reference		const_reference;
+		typedef typename allocator_type::pointer				pointer;
+		typedef typename allocator_type::const_pointer			const_pointer;
 		typedef std::ptrdiff_t									difference_type;
 		typedef size_t											size_type;
 		typedef	s_node<value_type>*								nodeptr;
 
-		rb_tree();
-		rb_tree(rb_tree copy);
+		rb_tree()
+		{
+			_root = NULL;
+		}
+		rb_tree(rb_tree const &copy);
 		virtual ~rb_tree()
 		{
 			//if _root
@@ -65,23 +69,23 @@ class rb_tree {
 		}
 		nodeptr	findMax(nodeptr node)
 		{
-			while (nde->right != _Tnil)
+			while (node->right != _Tnil)
 				node = node->right;
 			return (node);
 		}
-		nodeptr	searchNode(value_type key)
+		nodeptr	searchNode(key_type key)
 		{
 			nodeptr res = NULL;
 			nodeptr tmp = _root;
 
-			while (tmp != Tnil)
+			while (tmp != _Tnil)
 			{
-				if (tmp->value == key) //cmp
+				if (!key_compare(tmp->value, key) && !key_compare(key, tmp->value))
 				{
 					res = tmp;
 					break ;
 				}
-				else if (tmp->value > key) //cmp
+				else if (!key_compare(tmp->value, key))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -136,23 +140,23 @@ class rb_tree {
 
 		nodeptr	createNewNode(value_type value)
 		{
-			if (!this->_Tnull)
+			if (!_Tnil)
 			{
-				this->_Tnull = this->_nodealloc.allocate(1);
-				if (this->_Tnull)
-					this->_pairalloc.construct(this->_Tnull->value, NULL);
-				this->_Tnull->color = 'b';
-				this->_Tnull->left = this->_Tnull->right = this->_Tnull->parent = NULL;
+				_Tnil = _nodealloc.allocate(1);
+				//if (_Tnil)
+				//	_pairalloc.construct(&_Tnil->value, NULL);
+				_Tnil->color = 'b';
+				_Tnil->left = _Tnil->right = _Tnil->parent = NULL;
 			}
-			nodeptr newN = this->_nodealloc(1);
+			nodeptr newN = _nodealloc.allocate(1);
 			if (newN)
-				this->_pairalloc(newN->value, value);
+				_pairalloc.construct(&newN->value, value);
 
 			newN->value = value;
 			newN->color = 'r';
-			newN->left = this->_Tnull; //tthis->_Tnull ctrl c ctrlv
-			newN->right = this->_Tnull;
-			newN->parent = this->_Tnull;
+			newN->left = _Tnil;
+			newN->right = _Tnil;
+			newN->parent = _Tnil;
 			return (newN);
 		}
 		void	insertNode(value_type value)
@@ -171,13 +175,13 @@ class rb_tree {
 			while (x != _Tnil)
 			{
 				tmp = x;
-				if (node->value > x->value) //cmp
+				if (key_compare(x->value, node->value)) // x->v < n->v
 					x = x->right;
 				else
 					x = x->left;
 			}
 			node->parent = tmp;
-			if (node->value < tmp->value) //cmp
+			if (key_compare(node->value, tmp->value)) //node->v < tmp->v
 				tmp->left = node;
 			else
 				tmp->right = node;
@@ -199,7 +203,7 @@ class rb_tree {
 					{
 						node->parent->color = 'b';
 						y->color = 'b';
-						node->parent->parent = 'r';
+						node->parent->parent->color = 'r';
 						node = node->parent->parent;
 					}
 					else
@@ -241,7 +245,8 @@ class rb_tree {
 			}
 			_root->color = 'b';
 		}
-		void	deleteNode(value_type key)
+
+		void	deleteNode(key_type key)
 		{
 			nodeptr x, y;
 			x = y = NULL;
@@ -268,7 +273,7 @@ class rb_tree {
 			{
 				y = findMin(tmp->right);
 				ogcolor = y->color;
-				x = y->color;
+				x = y->right;
 				if (y->parent == tmp)
 					x->parent = y;
 				else
@@ -282,12 +287,12 @@ class rb_tree {
 				y->left->parent = y;
 				y->color = tmp->color;
 			}
-			_pairalloc.destroy(tmp, tmp->value);
+			_pairalloc.destroy(&tmp->value);
 			_nodealloc.deallocate(tmp, 1);
 			if (ogcolor == 'b')
 				deleteFix(x);
 		}
-		void	deleteFix(nodeptr node);
+		void	deleteFix(nodeptr node)
 		{
 			nodeptr	w = NULL;
 
@@ -312,7 +317,7 @@ class rb_tree {
 					{
 						if (w->right->color == 'b')
 						{
-							w->left->color == 'b';
+							w->left->color = 'b';
 							w->color = 'r';
 							rightRotate(w);
 							w = node->parent->right;
@@ -358,26 +363,36 @@ class rb_tree {
 			}
 			node->color = 'b';
 		}
-		void    _print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix)
+
+		void    printTree(std::string indent, bool last, nodeptr node = _root)
 		{
-			if (node->right != _Tnil)
-				_print(node->right, buffer, false,
-					std::string(prefix).append(is_tail != 0 ? "│   " : "	"));
-			buffer << prefix << (is_tail != 0 ? "└── " : "┌── ");
-			if (node->color == 'r')
-				buffer << "\033[31m";
-			buffer << node->data << "\033[0m" << std::endl;
-			if (node->left != _Tnil)
-				_print(node->left, buffer, true,
-					std::string(prefix).append(is_tail != 0 ? "	" : "│   "));
+			nodeptr tmp = node;
+			if (tmp)
+			{
+				if (tmp != NULL) {
+					std::cout << indent;
+					if (last) {
+						std::cout << "R----";
+						indent += "   ";
+					} else {
+						std::cout << "L----";
+						indent += "|  ";
+					}
+
+					std::string sColor = tmp->color == 'r' ? "RED" : "BLACK";
+					std::cout << tmp->value.key << "(" << sColor << ")" << std::endl;
+ 					printTree(indent, false, tmp->left);
+					printTree(indent, true, tmp->right);
+    			}
+			}
 		}
 
 	protected:
 	private:
 		allocator_type	_pairalloc;
-		allocator_type<s_node<value_type>>	_nodealloc;
-		nodeptr*	_root;
-		nodeptr*	_Tnil;
+		std::allocator< s_node< value_type > >	_nodealloc;
+		nodeptr	_root;
+		nodeptr	_Tnil;
 
 };
 
