@@ -42,11 +42,16 @@ class rb_tree {
 		typedef size_t											size_type;
 		typedef	s_node<value_type>*								nodeptr;
 
-		rb_tree()
+		rb_tree(allocator_type const &alloc = allocator_type(), key_compare const &compare = key_compare()) :
+		_comp(compare), _pairalloc(alloc)
 		{
 			_root = NULL;
 		}
-		rb_tree(rb_tree const &copy);
+		rb_tree(rb_tree const &rhs, allocator_type const &alloc = allocator_type(), key_compare const &compare = key_compare()) :
+		_pairalloc(rhs._pairalloc), _comp(rhs._comp)//, _size(size_type(0))
+		{
+			*this= rhs;
+		}
 		virtual ~rb_tree()
 		{
 			//if _root
@@ -80,12 +85,12 @@ class rb_tree {
 
 			while (tmp != _Tnil)
 			{
-				if (!key_compare(tmp->value, key) && !key_compare(key, tmp->value))
+				if (!_comp(tmp->value, key) && !_comp(key, tmp->value))
 				{
 					res = tmp;
 					break ;
 				}
-				else if (!key_compare(tmp->value, key))
+				else if (!_comp(tmp->value, key))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -175,13 +180,13 @@ class rb_tree {
 			while (x != _Tnil)
 			{
 				tmp = x;
-				if (key_compare(x->value, node->value)) // x->v < n->v
+				if (_comp(x->value, node->value)) // x->v < n->v
 					x = x->right;
 				else
 					x = x->left;
 			}
 			node->parent = tmp;
-			if (key_compare(node->value, tmp->value)) //node->v < tmp->v
+			if (_comp(node->value, tmp->value)) //node->v < tmp->v
 				tmp->left = node;
 			else
 				tmp->right = node;
@@ -389,6 +394,7 @@ class rb_tree {
 
 	protected:
 	private:
+		key_compare		_comp;
 		allocator_type	_pairalloc;
 		std::allocator< s_node< value_type > >	_nodealloc;
 		nodeptr	_root;
