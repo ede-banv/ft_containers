@@ -64,6 +64,73 @@ struct is_integral<int> {
 	const static bool value = true;
 };
 
+// -------- PAIR
+
+template < class Key, class T >
+struct pair {
+	typedef Key	key_type;
+	typedef T	value_type;
+
+	key_type	key;
+	value_type	value;
+
+	pair(void) :
+		key(),
+		value() {}
+
+	template< class U, class V >
+	pair(const pair<U, V> & pr) :
+		key(pr.key),
+		value(pr.value) {}
+
+	pair(const key_type & a, const value_type & b) :
+		key(a),
+		value(b) {}
+
+	pair& operator= (const pair & pr) {
+		if (this == &pr) return *this;
+		key = pr.key;
+		value = pr.value;
+		return *this;
+	}
+};
+
+template < class Key, class T >
+bool operator== (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
+	return lhs.key == rhs.key && lhs.value == rhs.value;
+}
+
+template < class Key, class T >
+bool operator!= (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
+	return !(lhs == rhs);
+}
+
+template < class Key, class T >
+bool operator<  (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
+	return lhs.key < rhs.key || (!(rhs.key < lhs.key) && lhs.value < rhs.value);
+}
+
+template < class Key, class T >
+bool operator<= (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
+	return !(rhs < lhs);
+}
+
+template < class Key, class T >
+bool operator>  (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
+	return rhs < lhs;
+}
+
+template < class Key, class T >
+bool operator>= (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
+	return !(lhs < rhs);
+}
+
+template< class Key, class T >
+pair<Key,T> make_pair( Key t, T u )
+{
+	return (pair<Key, T>(t, u));
+}
+
 }
 
 #endif

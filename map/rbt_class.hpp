@@ -2,6 +2,7 @@
 # define __RBT_CLASS__
 
 # include <iostream>
+# include <sstream>
 # include "../utils.hpp"
 
 # ifndef __APPLE__
@@ -21,10 +22,16 @@ struct s_node
 	value_type	value;
 	char		color;
 	struct s_node*	parent;
-	struct s_node*	right;
 	struct s_node*	left;
+	struct s_node*	right;
 
+	s_node(const value_type &src = value_type()) : \
+		value(src), parent(NULL), left(NULL), right(NULL) {};
 };
+
+template < class U, class V >
+std::ostream&	operator<<(std::ostream& o, const ft::pair<const U, V>& rhs)
+{	o<<rhs.key;return o;}
 
 template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
 class rb_tree {
@@ -47,7 +54,7 @@ class rb_tree {
 		{
 			_root = NULL;
 		}
-		rb_tree(rb_tree const &rhs, allocator_type const &alloc = allocator_type(), key_compare const &compare = key_compare()) :
+		rb_tree(rb_tree const &rhs) :
 		_pairalloc(rhs._pairalloc), _comp(rhs._comp)//, _size(size_type(0))
 		{
 			*this= rhs;
@@ -85,12 +92,12 @@ class rb_tree {
 
 			while (tmp != _Tnil)
 			{
-				if (!_comp(tmp->value, key) && !_comp(key, tmp->value))
+				if (!_comp(tmp->value.key, key) && !_comp(key, tmp->value.key))
 				{
 					res = tmp;
 					break ;
 				}
-				else if (!_comp(tmp->value, key))
+				else if (!_comp(tmp->value.key, key))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -147,17 +154,17 @@ class rb_tree {
 		{
 			if (!_Tnil)
 			{
-				_Tnil = _nodealloc.allocate(1);
-				//if (_Tnil)
-				//	_pairalloc.construct(&_Tnil->value, NULL);
+				//_Tnil = _nodealloc.allocate(1);
+				_Tnil = new s_node<value_type>();
 				_Tnil->color = 'b';
 				_Tnil->left = _Tnil->right = _Tnil->parent = NULL;
 			}
-			nodeptr newN = _nodealloc.allocate(1);
-			if (newN)
-				_pairalloc.construct(&newN->value, value);
+			//nodeptr newN = _nodealloc.allocate(1);
+			//if (newN)
+			//	_pairalloc.construct(&newN->value, value);
+			nodeptr newN = new s_node<value_type>(value);
 
-			newN->value = value;
+//			newN->value = value;
 			newN->color = 'r';
 			newN->left = _Tnil;
 			newN->right = _Tnil;
@@ -180,13 +187,13 @@ class rb_tree {
 			while (x != _Tnil)
 			{
 				tmp = x;
-				if (_comp(x->value, node->value)) // x->v < n->v
+				if (_comp(x->value.key, node->value.key)) // x->v < n->v
 					x = x->right;
 				else
 					x = x->left;
 			}
 			node->parent = tmp;
-			if (_comp(node->value, tmp->value)) //node->v < tmp->v
+			if (_comp(node->value.key, tmp->value.key)) //node->v < tmp->v
 				tmp->left = node;
 			else
 				tmp->right = node;
@@ -292,8 +299,9 @@ class rb_tree {
 				y->left->parent = y;
 				y->color = tmp->color;
 			}
-			_pairalloc.destroy(&tmp->value);
-			_nodealloc.deallocate(tmp, 1);
+			//_pairalloc.destroy(&tmp->value);
+			//_nodealloc.deallocate(tmp, 1);
+			delete tmp;
 			if (ogcolor == 'b')
 				deleteFix(x);
 		}
@@ -369,10 +377,12 @@ class rb_tree {
 			node->color = 'b';
 		}
 
-		void    printTree(std::string indent, bool last, nodeptr node = _root)
+/*		void    printTree(std::string indent, bool last, nodeptr node)
 		{
+			if (!node)
+				node = _root;
 			nodeptr tmp = node;
-			if (tmp)
+			if (tmp != _Tnil)
 			{
 				if (tmp != NULL) {
 					std::cout << indent;
@@ -386,12 +396,30 @@ class rb_tree {
 
 					std::string sColor = tmp->color == 'r' ? "RED" : "BLACK";
 					std::cout << tmp->value.key << "(" << sColor << ")" << std::endl;
- 					printTree(indent, false, tmp->left);
-					printTree(indent, true, tmp->right);
+ 					if (tmp->left != _Tnil) printTree(indent, false, tmp->left);
+					if (tmp->right != _Tnil) printTree(indent, true, tmp->right);
     			}
 			}
 		}
+*/
+		void    printTree(void) {
+                std::stringstream buffer;
+                this->_print(this->_root, buffer, true, "");
+                std::cout << buffer.str();
+            }
 
+            void    _print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix) {
+                if (node->right != this->_Tnil)
+                    this->_print(node->right, buffer, false,
+                        std::string(prefix).append(is_tail != 0 ? "│   " : "    "));
+                buffer << prefix << (is_tail != 0 ? "└── " : "┌── ");
+                if (node->color == 'r')
+                    buffer << "\033[31m";
+                buffer << node->value << "\033[0m" << std::endl;
+                if (node->left != this->_Tnil)
+                    this->_print(node->left, buffer, true,
+                            std::string(prefix).append(is_tail != 0 ? "    " : "│   "));
+            }
 	protected:
 	private:
 		key_compare		_comp;

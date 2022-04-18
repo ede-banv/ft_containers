@@ -10,9 +10,9 @@ int main()
 	root.insertNode(ft::pair<const int, int>(65, 5));
 	root.insertNode(ft::pair<const int, int>(57, 6));
 
-	root.printTree("", true);
+	root.printTree();
 	std::cout << std::endl
 		 << "After deleting" << std::endl;
 	root.deleteNode(40);
-	root.printTree("", true);
+	root.printTree();
 }
