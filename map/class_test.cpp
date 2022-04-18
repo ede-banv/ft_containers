@@ -11,8 +11,8 @@ int main()
 	root.insertNode(ft::pair<const int, int>(57, 6));
 
 	root.printTree();
-	std::cout << std::endl
-		 << "After deleting" << std::endl;
-	root.deleteNode(40);
-	root.printTree();
+	//std::cout << std::endl
+	//	 << "After deleting" << std::endl;
+	//root.deleteNode(40);
+	//root.printTree();
 }

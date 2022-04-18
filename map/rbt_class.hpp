@@ -50,12 +50,12 @@ class rb_tree {
 		typedef	s_node<value_type>*								nodeptr;
 
 		rb_tree(allocator_type const &alloc = allocator_type(), key_compare const &compare = key_compare()) :
-		_comp(compare), _pairalloc(alloc)
+		_comp(compare), _pairalloc(alloc), _size(0)
 		{
 			_root = NULL;
 		}
 		rb_tree(rb_tree const &rhs) :
-		_pairalloc(rhs._pairalloc), _comp(rhs._comp)//, _size(size_type(0))
+		_pairalloc(rhs._pairalloc), _comp(rhs._comp), _size(rhs.size)//, _size(size_type(0))
 		{
 			*this= rhs;
 		}
@@ -75,13 +75,13 @@ class rb_tree {
 
 		nodeptr	findMin(nodeptr	node)
 		{
-			while (node->left != _Tnil)
+			while (node->left != NULL)
 				node = node->left;
 			return (node);
 		}
 		nodeptr	findMax(nodeptr node)
 		{
-			while (node->right != _Tnil)
+			while (node->right != NULL)
 				node = node->right;
 			return (node);
 		}
@@ -90,7 +90,7 @@ class rb_tree {
 			nodeptr res = NULL;
 			nodeptr tmp = _root;
 
-			while (tmp != _Tnil)
+			while (tmp != NULL)
 			{
 				if (!_comp(tmp->value.key, key) && !_comp(key, tmp->value.key))
 				{
@@ -110,10 +110,10 @@ class rb_tree {
 			nodeptr	y = x->right;
 
 			x->right = y->left;
-			if (y->left != _Tnil)
+			if (y->left != NULL)
 				y->left->parent = x;
 			y->parent = x->parent;
-			if (x->parent == _Tnil)
+			if (x->parent == NULL)
 				_root = y;
 			else if (x == x->parent->left)
 				x->parent->left = y;
@@ -126,11 +126,11 @@ class rb_tree {
 		{
 			nodeptr	y = x->left;
 
-			y->left = x->right;
-			if (x->right != _Tnil)
-				x->right->parent = y;
+			x->left = y->right;
+			if (y->right != NULL)
+				y->right->parent = x;
 			y->parent = x->parent;
-			if (x->parent == _Tnil)
+			if (x->parent == NULL)
 				_root = y;
 			else if (x == x->parent->right)
 				x->parent->right = y;
@@ -152,13 +152,6 @@ class rb_tree {
 
 		nodeptr	createNewNode(value_type value)
 		{
-			if (!_Tnil)
-			{
-				//_Tnil = _nodealloc.allocate(1);
-				_Tnil = new s_node<value_type>();
-				_Tnil->color = 'b';
-				_Tnil->left = _Tnil->right = _Tnil->parent = NULL;
-			}
 			//nodeptr newN = _nodealloc.allocate(1);
 			//if (newN)
 			//	_pairalloc.construct(&newN->value, value);
@@ -166,9 +159,9 @@ class rb_tree {
 
 //			newN->value = value;
 			newN->color = 'r';
-			newN->left = _Tnil;
-			newN->right = _Tnil;
-			newN->parent = _Tnil;
+			newN->left = NULL;
+			newN->right = NULL;
+			newN->parent = NULL;
 			return (newN);
 		}
 		void	insertNode(value_type value)
@@ -181,10 +174,10 @@ class rb_tree {
 			{
 				_root = node;
 				_root->color = 'b';
-				_root->parent = _Tnil;
+				std::cout << node->value << "\t" << node << "\tp: " << node->parent << "\tl: " << node->left << "\tr: " << node->right << "\n";
 				return ;
 			}
-			while (x != _Tnil)
+			while (x != NULL)
 			{
 				tmp = x;
 				if (_comp(x->value.key, node->value.key)) // x->v < n->v
@@ -198,9 +191,13 @@ class rb_tree {
 			else
 				tmp->right = node;
 
-			if (node->parent->parent == _Tnil)
+			if (node->parent->parent == NULL)
 				return ;
+
+			std::cout << node->value << "\t" << node << "\tp: " << node->parent << "\tl: " << node->left << "\tr: " << node->right << "\n";
 			insertFix(node);
+			std::cout << node->value << "\t" << node << "\tp: " << node->parent << "\tl: " << node->left << "\tr: " << node->right << "\n\n";
+			_size++;
 		}
 		void	insertFix(nodeptr node)
 		{
@@ -211,7 +208,7 @@ class rb_tree {
 				if (node->parent == node->parent->parent->right)
 				{
 					y = node->parent->parent->left; //uncle
-					if (y->color == 'r')
+					if (y && y->color == 'r')
 					{
 						node->parent->color = 'b';
 						y->color = 'b';
@@ -233,7 +230,7 @@ class rb_tree {
 				else
 				{
 					y = node->parent->parent->right;
-					if (y->color == 'r')
+					if (y && y->color == 'r')
 					{
 						y->color = 'b';
 						node->parent->color = 'b';
@@ -271,12 +268,12 @@ class rb_tree {
 
 			y = tmp;
 			char	ogcolor = y->color;
-			if (tmp->left == _Tnil)
+			if (tmp->left == NULL)
 			{
 				x = tmp->right;
 				rbTransplant(tmp, tmp->right);
 			}
-			else if (tmp->right == _Tnil)
+			else if (tmp->right == NULL)
 			{
 				x = tmp->left;
 				rbTransplant(tmp, tmp->left);
@@ -304,6 +301,7 @@ class rb_tree {
 			delete tmp;
 			if (ogcolor == 'b')
 				deleteFix(x);
+			_size--;
 		}
 		void	deleteFix(nodeptr node)
 		{
@@ -382,7 +380,7 @@ class rb_tree {
 			if (!node)
 				node = _root;
 			nodeptr tmp = node;
-			if (tmp != _Tnil)
+			if (tmp != NULL)
 			{
 				if (tmp != NULL) {
 					std::cout << indent;
@@ -396,8 +394,8 @@ class rb_tree {
 
 					std::string sColor = tmp->color == 'r' ? "RED" : "BLACK";
 					std::cout << tmp->value.key << "(" << sColor << ")" << std::endl;
- 					if (tmp->left != _Tnil) printTree(indent, false, tmp->left);
-					if (tmp->right != _Tnil) printTree(indent, true, tmp->right);
+ 					if (tmp->left != NULL) printTree(indent, false, tmp->left);
+					if (tmp->right != NULL) printTree(indent, true, tmp->right);
     			}
 			}
 		}
@@ -409,14 +407,17 @@ class rb_tree {
             }
 
             void    _print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix) {
-                if (node->right != this->_Tnil)
+                std::cout << "lol"<<node<<"\n";
+				if (node == NULL)
+					return;
+				if (node->right != NULL)
                     this->_print(node->right, buffer, false,
                         std::string(prefix).append(is_tail != 0 ? "│   " : "    "));
                 buffer << prefix << (is_tail != 0 ? "└── " : "┌── ");
                 if (node->color == 'r')
                     buffer << "\033[31m";
                 buffer << node->value << "\033[0m" << std::endl;
-                if (node->left != this->_Tnil)
+                if (node->left != NULL)
                     this->_print(node->left, buffer, true,
                             std::string(prefix).append(is_tail != 0 ? "    " : "│   "));
             }
@@ -426,7 +427,8 @@ class rb_tree {
 		allocator_type	_pairalloc;
 		std::allocator< s_node< value_type > >	_nodealloc;
 		nodeptr	_root;
-		nodeptr	_Tnil;
+		nodeptr	last;
+		size_type	_size;
 
 };
 
