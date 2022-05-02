@@ -147,7 +147,7 @@ class rb_tree {
 				u->parent->left = v;
 			else
 				u->parent->right = v;
-			if (v && v->parent) //verifierw, c nul, tt est nul je hais ce projjet et les rbt nike sa mere la grosse fille de policier
+			if (v && v->parent)
 				v->parent = u->parent;
 		}
 
