@@ -16,5 +16,5 @@ int main()
 	std::cout << std::endl
 		 << "After deleting" << std::endl;
 	root.deleteNode(40);
-	//root.printTree();
+	root.printTree();
 }

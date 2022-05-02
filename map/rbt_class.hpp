@@ -175,7 +175,6 @@ class rb_tree {
 			{
 				_root = node;
 				_root->color = 'b';
-				std::cout << node->value << "\t" << node << "\tp: " << node->parent << "\tl: " << node->left << "\tr: " << node->right << "\n";
 				return ;
 			}
 			while (x != NULL)
@@ -194,10 +193,7 @@ class rb_tree {
 
 			if (node->parent->parent == NULL)
 				return ;
-
-			std::cout << node->value << "\t" << node << "\tp: " << node->parent << "\tl: " << node->left << "\tr: " << node->right << "\n";
 			insertFix(node);
-			std::cout << node->value << "\t" << node << "\tp: " << node->parent << "\tl: " << node->left << "\tr: " << node->right << "\n\n";
 			_size++;
 		}
 		void	insertFix(nodeptr node)
@@ -258,8 +254,9 @@ class rb_tree {
 
 		void	deleteNode(key_type key)
 		{
-			nodeptr x, y;
-			x = y = NULL;
+			nodeptr x, y, oldparent;
+			bool		left;
+			x = y = oldparent = NULL;
 			nodeptr	tmp = searchNode(key);
 			if (!tmp)
 			{
@@ -272,11 +269,15 @@ class rb_tree {
 			if (tmp->left == NULL)
 			{
 				x = tmp->right;
+				oldparent = tmp->parent;
+				left = (tmp->parent && tmp == tmp->parent->left ? true : false);
 				rbTransplant(tmp, tmp->right);
 			}
 			else if (tmp->right == NULL)
 			{
 				x = tmp->left;
+				oldparent = tmp->parent;
+				left = (tmp->parent && tmp == tmp->parent->left ? true : false);
 				rbTransplant(tmp, tmp->left);
 			}
 			else
@@ -285,13 +286,20 @@ class rb_tree {
 				ogcolor = y->color;
 				x = y->right;
 				if (y->parent == tmp)
-					x->parent = y;
+				{
+					if (x)
+						x->parent = y;
+				}
 				else
 				{
+					oldparent = y->parent;
+					left = (tmp->parent && tmp == y->parent->left ? true : false);
 					rbTransplant(y, y->right);
 					y->right = tmp->right;
 					y->right->parent = y;
 				}
+				oldparent = tmp->parent;
+				left = (tmp->parent && tmp == tmp->parent->left ? true : false);
 				rbTransplant(tmp, y);
 				y->left = tmp->left;
 				y->left->parent = y;
@@ -301,106 +309,84 @@ class rb_tree {
 			//_nodealloc.deallocate(tmp, 1);
 			delete tmp;
 			if (ogcolor == 'b')
-				deleteFix(x);
+				deleteFix(x, oldparent, left);
 			_size--;
 		}
-		void	deleteFix(nodeptr node)
+		void	deleteFix(nodeptr node, nodeptr parent, bool left)
 		{
 			nodeptr	w = NULL;
 
-			while (node != _root && node->color == 'b')
+			while (parent != NULL && (node && node->color == 'b'))
 			{
-				if (node == node->parent->left)
+				if (left)
 				{
-					w = node->parent->right;
+					w = parent->right;
 					if (w->color == 'r')
 					{
 						w->color = 'b';
-						node->parent->color = 'r';
-						leftRotate(node->parent);
-						w = node->parent->right;
+						parent->color = 'r';
+						leftRotate(parent);
+						w = parent->right;
 					}
-					if (w->left->color == 'b' && w->right->color == 'b')
+					if (w->left && w->left->color == 'b' && w->right && w->right->color == 'b')
 					{
 						w->color = 'r';
-						node = node->parent;
+						node = parent;
 					}
 					else
 					{
-						if (w->right->color == 'b')
+						if (w->right && w->right->color == 'b')
 						{
 							w->left->color = 'b';
 							w->color = 'r';
 							rightRotate(w);
-							w = node->parent->right;
+							w = parent->right;
 						}
-						w->color = node->parent->color;
-						node->parent->color = 'b';
-						w->right->color = 'b';
-						leftRotate(node->parent);
+						w->color = parent->color;
+						parent->color = 'b';
+						if (w->right)
+							w->right->color = 'b';
+						leftRotate(parent);
 						node = _root;
 					}
 				}
 				else
 				{
-					w = node->parent->left;
+					w = parent->left;
 					if (w->color == 'r')
 					{
 						w->color = 'b';
-						node->parent->color = 'r';
-						rightRotate(node->parent);
-						w = node->parent->left;
+						parent->color = 'r';
+						rightRotate(parent);
+						w = parent->left;
 					}
-					if (w->right->color == 'b' && w->left->color == 'b')
+					if (w->right && w->right->color == 'b' && w->left && w->left->color == 'b')
 					{
 						w->color = 'r';
-						node = node->parent;
+						node = parent;
 					}
 					else
 					{
-						if (w->left->color == 'b')
+						if (w->left && w->left->color == 'b')
 						{
 							w->right->color = 'b';
 							w->color = 'r';
 							leftRotate(w);
-							w = node->parent->left;
+							w = parent->left;
 						}
-						w->color = node->parent->color;
-						node->parent->color = 'b';
-						w->left->color = 'b';
-						rightRotate(node->parent);
+						w->color = parent->color;
+						parent->color = 'b';
+						if (w->left)
+							w->left->color = 'b';
+						rightRotate(parent);
 						node = _root;
 					}
 				}
 			}
-			node->color = 'b';
+			if (node)
+				node->color = 'b';
 		}
 
-/*		void    printTree(std::string indent, bool last, nodeptr node)
-		{
-			if (!node)
-				node = _root;
-			nodeptr tmp = node;
-			if (tmp != NULL)
-			{
-				if (tmp != NULL) {
-					std::cout << indent;
-					if (last) {
-						std::cout << "R----";
-						indent += "   ";
-					} else {
-						std::cout << "L----";
-						indent += "|  ";
-					}
-
-					std::string sColor = tmp->color == 'r' ? "RED" : "BLACK";
-					std::cout << tmp->value.key << "(" << sColor << ")" << std::endl;
- 					if (tmp->left != NULL) printTree(indent, false, tmp->left);
-					if (tmp->right != NULL) printTree(indent, true, tmp->right);
-    			}
-			}
-		}
-*/
 		void    printTree(void) {
                 std::stringstream buffer;
                 this->_print(this->_root, buffer, true, "");
@@ -408,7 +394,6 @@ class rb_tree {
             }
 
             void    _print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix) {
-                std::cout << "lol"<<node<<"\n";
 				if (node == NULL)
 					return;
 				if (node->right != NULL)
