@@ -4,6 +4,8 @@
 # include <iostream>
 # include <sstream>
 # include "../utils.hpp"
+# include "rbtiterator.hpp"
+# include "../reverseiterator.hpp"
 
 # ifndef __APPLE__
 #  define __APPLE__ 0
@@ -47,7 +49,12 @@ class rb_tree {
 		typedef typename allocator_type::const_pointer			const_pointer;
 		typedef std::ptrdiff_t									difference_type;
 		typedef size_t											size_type;
-		typedef	s_node<value_type>*								nodeptr;
+		typedef	s_node< value_type >*							nodeptr;
+
+		typedef rbt_ite< T, s_node< T > >						iterator;
+		typedef rbt_ite< T const, s_node< T > >				const_iterator;
+		typedef ft::reverse_iterator< iterator >				reverse_iterator;
+		typedef ft::reverse_iterator< const_iterator >			const_reverse_iterator;
 
 		/* * * * Constructors * * * */
 		rb_tree(allocator_type const &alloc = allocator_type(), key_compare const &compare = key_compare()) :
@@ -209,8 +216,10 @@ class rb_tree {
 			newN->parent = NULL;
 			return (newN);
 		}
-		void	insertNode(value_type value)
+		int		insertNode(value_type value)
 		{
+			if (searchNode(value))
+				return (0);
 			nodeptr	node = createNewNode(value);
 			nodeptr	x = _root;
 			nodeptr	tmp = NULL;
@@ -219,7 +228,7 @@ class rb_tree {
 			{
 				_root = node;
 				_root->color = 'b';
-				return ;
+				return (1);
 			}
 			while (x != NULL)
 			{
@@ -239,6 +248,7 @@ class rb_tree {
 				return ;
 			insertFix(node);
 			_size++;
+			return (1);
 		}
 		void	insertFix(nodeptr node)
 		{
@@ -430,6 +440,24 @@ class rb_tree {
 				node->color = 'b';
 		}
 
+		/* * * * Iterator * * * */
+		iterator	begin()
+		{	return (iterator(min(), _root));	}
+		const_iterator	begin() const
+		{	return (const_iterator(min(), _root));	}
+		iterator	end()
+		{	return (iterator(_nil, _root));	}
+		const_iterator	end() const
+		{	return (const_iterator(_nil, _root));	}
+		reverse_iterator	rbegin()
+		{	return (reverse_iterator(end()));	}
+		const_reverse_iterator	rbegin() const
+		{	return (const_reverse_iterator(end()));	}
+		reverse_iterator	rend()
+		{	return (reverse_iterator(begin()));	}
+		const_reverse_iterator	rend() const
+		{	return (const_reverse_iterator(begin()));	}
+
 		/* * * * Printer * * * */
 		void    printTree(void) {
 			std::stringstream buffer;
@@ -450,6 +478,7 @@ class rb_tree {
 				this->_print(node->left, buffer, true,
 					std::string(prefix).append(is_tail != 0 ? "    " : "│   "));
 		}
+
 	protected:
 	private:
 		key_compare		_comp;

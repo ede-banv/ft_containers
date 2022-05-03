@@ -5,7 +5,6 @@
 #include <utility>
 #include <memory>
 # include "rbt_class.hpp"
-# include "bidirectionaliterators.hpp"
 # include "../iterator_traits.hpp"
 # include "../utils.hpp"
 
@@ -21,9 +20,9 @@ class map {
 	public:
 		typedef Key												key_type;
 		typedef T												mapped_type;
-		typedef std::pair<const key_type, mapped_type>			value_type;
+		typedef std::pair< const key_type, mapped_type >		value_type;
 		typedef	Compare											key_compare;
-		typedef typename std::allocator<std::pair<const Key,T>	allocator_type;
+		typedef typename std::allocator< std::pair<constKey,T>	allocator_type;
 		typedef typename allocator_type::reference				reference;
 		typedef typename allocator_type::const_reference		const_reference;
 		typedef typename allocator_type::pointer				pointer;
@@ -31,15 +30,25 @@ class map {
 		typedef std::ptrdiff_t									difference_type;
 		typedef size_t											size_type;
 
-		class iterator: public BiDir<value_type> {
-			public:
+		typedef typename tree_type::iterator					iterator;
+		typedef typename tree_type::const_iterator				const_iterator;
+		typedef ft::reverse_iterator< iterator >				reverse_iterator;
+		typedef ft::reverse_iterator< const_iterator >			const_reverse_iterator;
 
-		}
 
-		class const_iterator: public BiDir<value_type> {
+		class value_compare: public std::binary_function < value_type, value_type, bool >
+		{
 			public:
-//a vuar
-		}
+				bool	operator()(value_type const &lhs, value_type const &rhs) const
+				{	return (comp(lhs.first, rhs.first));	}
+
+			protected:
+				key_compare comp;
+				value_compare(key_compare c): comp(c) {}
+
+			private:
+				friend class map;
+		};
 
 		// ** MEMBER FUNCTIONS **
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):
@@ -74,7 +83,10 @@ class map {
 		// ** MODIFIERS **
 		pair<iterator,bool>	insert(const value_type& val)
 		{
-			_Treeroot->insertNode(val);
+			if (!_Treeroot->insertNode(val))
+			{
+				return
+			}
 		}
 		iterator			insert(iterator position, const value_type& val)
 		{
@@ -88,23 +100,23 @@ class map {
 			_Treeroot->deleteNode(k);
 		}
 		void				erase(iterator first, iterator last);
-		void				swap (map& x);
+		void				swap(map& x);
 		void				clear();
 
 		// ** ITERATORS **
 
-		iterator				begin() {	;	} //smallest: far left
-		const_iterator			begin() const {	;	} //idem
-		iterator				end() {	;	} //largest: far right
-		const_iterator			end() const {	;	} //idem
-		reverse_iterator		rbegin() {	;	} //largest
-		const_reverse_iterator	rbegin() const {	;	} //idem
-		reverse_iterator		rend() {	;	} //smallest
-		const_reverse_iterator	rend() const {	;	} //idem
+		iterator				begin() {	return (_Treeroot->begin());	} //smallest: far left
+		const_iterator			begin() const {	return (_Treeroot->begin());	} //idem
+		iterator				end() {	return (_Treeroot->end());	} //largest: far right
+		const_iterator			end() const {	return (_Treeroot->end());	} //idem
+		reverse_iterator		rbegin() {	return (_Treeroot->rbegin());	} //largest
+		const_reverse_iterator	rbegin() const {	return (_Treeroot->rbegin());	} //idem
+		reverse_iterator		rend() {	return (_Treeroot->rend());	} //smallest
+		const_reverse_iterator	rend() const {	return (_Treeroot->rend());	} //idem
 
 		// ** OBSRVERS **
-		key_compare		key_comp() const {	return(_key_comp);	}
-		value_compare	value_comp() const {	;	}
+		key_compare		key_comp() const {	return (_key_comp);	}
+		value_compare	value_comp() const {	return (_value_comp);	}
 
 		// ** OPERATIONS **
 		iterator		find(const key_type& k);
@@ -119,8 +131,11 @@ class map {
 
 		// ** ALLOCATOR **
 		allocator_type	get_allocator() const {	return (_alloc);	}
-	protected:
-		rb_tree<Key, T, Compare, Alloc>*	_Treeroot
+
+	private:
+		typedef	rb_tree<Key, T, Compare, Alloc>	tree_type;
+
+		tree_type*							_Treeroot
 		allocator_type						_allocp;
 		std::allocator<s_node<value_type>	_allocn;
 		key_compare							_key_comp;

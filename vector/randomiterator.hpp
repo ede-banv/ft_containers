@@ -9,12 +9,12 @@ template < class T >
 class RandIt {
 	public:
 		typedef std::random_access_iterator_tag	iterator_category;
-		typedef std::ptrdiff_t					difference_type;
-		typedef size_t							size_type;
 		typedef T								value_type;
 		typedef T*								pointer;
 		typedef T&								reference;
 		typedef const T&						const_reference;
+		typedef std::ptrdiff_t					difference_type;
+		typedef size_t							size_type;
 
 		RandIt(): _ptr(NULL) {}
 		RandIt(pointer ptr): _ptr(ptr) {}
