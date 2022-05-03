@@ -4,6 +4,7 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+# include "rbt_class.hpp"
 # include "bidirectionaliterators.hpp"
 # include "../iterator_traits.hpp"
 # include "../utils.hpp"
@@ -13,22 +14,6 @@
 # endif
 
 namespace ft {
-
-template < class pair_type>
-struct s_node
-{
-	private:
-		bool _unused;
-		#if __APPLE__ == 0
-			int _unused_linux;
-		#endif
-	public:
-		pair_type	value;
-		char		color;
-		s_node		*right;
-		s_node		*left;
-		s_node		*parent;
-};
 
 template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key,T> > >
 class map {
@@ -87,12 +72,21 @@ class map {
 		mapped_type&	operator[](const key_type& k);
 
 		// ** MODIFIERS **
-		pair<iterator,bool>	insert(const value_type& val);
-		iterator			insert(iterator position, const value_type& val);
+		pair<iterator,bool>	insert(const value_type& val)
+		{
+			_Treeroot->insertNode(val);
+		}
+		iterator			insert(iterator position, const value_type& val)
+		{
+
+		}
 		template <class InputIterator>
 		void				insert(InputIterator first, InputIterator last);
 		void				erase(iterator position);
-		size_type			erase(const key_type& k);
+		size_type			erase(const key_type& k)
+		{
+			_Treeroot->deleteNode(k);
+		}
 		void				erase(iterator first, iterator last);
 		void				swap (map& x);
 		void				clear();
@@ -126,25 +120,12 @@ class map {
 		// ** ALLOCATOR **
 		allocator_type	get_allocator() const {	return (_alloc);	}
 	protected:
-		s_node<value_type>*					_root;
+		rb_tree<Key, T, Compare, Alloc>*	_Treeroot
 		allocator_type						_allocp;
 		std::allocator<s_node<value_type>	_allocn;
 		key_compare							_key_comp;
 		size_type							_size;
 		size_type							_max_size;
-
-		s_node<value_type>*					_Tnull;
-
-		s_node<value_type>*	_newNode(value_type value);
-		void				_searchKey(s_node<value_type>** root, value_type key);
-		s_node<value_type>*	_findMaxKey(s_node<value_type>*node);
-		void				_leftRotate(s_node<value_type>* node);
-		void				_rightRotate(s_node<value_type>* node);
-		void				_insertNode(s_node<value_type>* node, value_type value); //verify if value should be pair type
-		void				_insertFix(s_node<value_type>* node);
-		void				_rbTransplant(s_node<value_type>* u, s_node<value_type>* v);
-		void				_deleteNode(s_node<value_type>* node, value_type key); //verify arg type
-		void				_deleteFix(s_node<value_type>* node);
 };
 
 }

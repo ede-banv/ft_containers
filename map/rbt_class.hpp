@@ -49,6 +49,7 @@ class rb_tree {
 		typedef size_t											size_type;
 		typedef	s_node<value_type>*								nodeptr;
 
+		/* * * * Constructors * * * */
 		rb_tree(allocator_type const &alloc = allocator_type(), key_compare const &compare = key_compare()) :
 		_comp(compare), _pairalloc(alloc), _size(0)
 		{
@@ -83,6 +84,12 @@ class rb_tree {
 			_pairalloc.destroy(&node->value);
 			_nodealloc.deallocate(node, 1);
 		}
+
+		/* * * * Getter * * * */
+		size_type	getSize()
+		{	return (_size);	}
+
+		/* * * * Finders * * * */
 		nodeptr	findMin(nodeptr	node)
 		{
 			while (node->left != NULL)
@@ -95,6 +102,8 @@ class rb_tree {
 				node = node->right;
 			return (node);
 		}
+		nodeptr	findLast()
+		{	return (findMax(_root));	}
 		nodeptr	searchNode(key_type key)
 		{
 			nodeptr res = NULL;
@@ -114,7 +123,32 @@ class rb_tree {
 			}
 			return (res);
 		}
+		nodeptr	getPrev(nodeptr node)
+		{
+			if (node->left)
+				return (findMax(node->left));
+			nodeptr parent = node->parent;
+			while (parent && node == parent->left)
+			{
+				node = parent;
+				parent = parent->parent;
+			}
+			return (parent);
+		}
+		nodeptr	getNext(nodeptr node)
+		{
+			if (node->right)
+				return (findMin(node->right));
+			nodeptr parent = node->parent;
+			while (parent && node == parent->right)
+			{
+				node = parent;
+				parent = parent->parent;
+			}
+			return (parent);
+		}
 
+		/* * * * Movers * * * */
 		void	leftRotate(nodeptr	x)
 		{
 			nodeptr	y = x->right;
@@ -161,6 +195,7 @@ class rb_tree {
 				v->parent = u->parent;
 		}
 
+		/* * * * Nodes Insertion-Deletion * * * */
 		nodeptr	createNewNode(value_type value)
 		{
 			nodeptr newN = _nodealloc.allocate(1);
@@ -395,26 +430,26 @@ class rb_tree {
 				node->color = 'b';
 		}
 
+		/* * * * Printer * * * */
 		void    printTree(void) {
-                std::stringstream buffer;
-                this->_print(this->_root, buffer, true, "");
-                std::cout << buffer.str();
-            }
-
-            void    _print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix) {
-				if (node == NULL)
-					return;
-				if (node->right != NULL)
-                    this->_print(node->right, buffer, false,
-                        std::string(prefix).append(is_tail != 0 ? "│   " : "    "));
-                buffer << prefix << (is_tail != 0 ? "└── " : "┌── ");
-                if (node->color == 'r')
-                    buffer << "\033[31m";
-                buffer << node->value << "\033[0m" << std::endl;
-                if (node->left != NULL)
-                    this->_print(node->left, buffer, true,
-                            std::string(prefix).append(is_tail != 0 ? "    " : "│   "));
-            }
+			std::stringstream buffer;
+			this->_print(this->_root, buffer, true, "");
+			std::cout << buffer.str();
+		}
+		void	_print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix) {
+			if (node == NULL)
+				return;
+			if (node->right != NULL)
+				this->_print(node->right, buffer, false,
+					std::string(prefix).append(is_tail != 0 ? "│   " : "	"));
+			buffer << prefix << (is_tail != 0 ? "└── " : "┌── ");
+			if (node->color == 'r')
+				buffer << "\033[31m";
+			buffer << node->value << "\033[0m" << std::endl;
+			if (node->left != NULL)
+				this->_print(node->left, buffer, true,
+					std::string(prefix).append(is_tail != 0 ? "    " : "│   "));
+		}
 	protected:
 	private:
 		key_compare		_comp;
