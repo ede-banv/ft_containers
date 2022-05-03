@@ -61,18 +61,28 @@ class rb_tree {
 		}
 		virtual ~rb_tree()
 		{
-			//if _root
-			// delete tree
+			delete_recursif(_root);
 		}
 
 		rb_tree&	operator=(rb_tree rhs)
 		{
-			//if root
-			// delete tree
+			delete_recursif(_root);
 			_root = rhs->_root;
+			//other values as well?
 			return (this);
 		}
 
+		void	delete_recursif(nodeptr node)
+		{
+			if (!node)
+				return ;
+			if (node->left)
+				delete_recursif(node->left);
+			if (node->right)
+				delete_recursif(node->right);
+			_pairalloc.destroy(&node->value);
+			_nodealloc.deallocate(node, 1);
+		}
 		nodeptr	findMin(nodeptr	node)
 		{
 			while (node->left != NULL)
@@ -153,12 +163,11 @@ class rb_tree {
 
 		nodeptr	createNewNode(value_type value)
 		{
-			//nodeptr newN = _nodealloc.allocate(1);
-			//if (newN)
-			//	_pairalloc.construct(&newN->value, value);
-			nodeptr newN = new s_node<value_type>(value);
+			nodeptr newN = _nodealloc.allocate(1);
+			if (!newN)
+				return NULL;
+			_pairalloc.construct(&newN->value, value);
 
-//			newN->value = value;
 			newN->color = 'r';
 			newN->left = NULL;
 			newN->right = NULL;
@@ -305,9 +314,8 @@ class rb_tree {
 				y->left->parent = y;
 				y->color = tmp->color;
 			}
-			//_pairalloc.destroy(&tmp->value);
-			//_nodealloc.deallocate(tmp, 1);
-			delete tmp;
+			_pairalloc.destroy(&tmp->value);
+			_nodealloc.deallocate(tmp, 1);
 			if (ogcolor == 'b')
 				deleteFix(x, oldparent, left);
 			_size--;
