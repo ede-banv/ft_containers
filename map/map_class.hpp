@@ -51,14 +51,16 @@ class map {
 		};
 
 		// ** MEMBER FUNCTIONS **
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):
-		, _root(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size()) {}
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
+		_Treeroot(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size()) {}
 
 		template <class InputIterator>
-		//map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+		map(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
+		_Treeroot(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size())
+		{	insert(first, last);	}
+
 		map(const map& copy): _alloc(get_allocator()), _key_comp(comp), _size(size()), _max_size(max_size())
 		{
-			//*this = x
 			if (empty())
 			{
 				//put all binary tree
