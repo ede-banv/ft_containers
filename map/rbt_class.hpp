@@ -306,17 +306,14 @@ class rb_tree {
 			_root->color = 'b';
 		}
 
-		void	deleteNode(key_type key)
+		bool	deleteNode(key_type key)
 		{
 			nodeptr x, y, oldparent;
 			bool		left;
 			x = y = oldparent = NULL;
 			nodeptr	tmp = searchNode(key);
 			if (!tmp)
-			{
-				std::cout << "Key not found in tree\n";
-				return ;
-			}
+				return (false);
 
 			y = tmp;
 			char	ogcolor = y->color;
@@ -364,6 +361,7 @@ class rb_tree {
 			if (ogcolor == 'b')
 				deleteFix(x, oldparent, left);
 			_size--;
+			return (true);
 		}
 		void	deleteFix(nodeptr node, nodeptr parent, bool left)
 		{

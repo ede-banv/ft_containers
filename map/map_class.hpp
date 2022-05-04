@@ -43,7 +43,7 @@ class map {
 				{	return (comp(lhs.first, rhs.first));	}
 
 			protected:
-				key_compare comp;
+				key_compare	comp;
 				value_compare(key_compare c): comp(c) {}
 
 			private:
@@ -59,51 +59,88 @@ class map {
 		_Treeroot(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size())
 		{	insert(first, last);	}
 
-		map(const map& copy): _alloc(get_allocator()), _key_comp(comp), _size(size()), _max_size(max_size())
+		map(const map& copy)
+		{	*this = copy;	}
+
+		~map()
+		{	clear();	}
+
+		map&	operator=(const map& rhs)
 		{
-			if (empty())
-			{
-				//put all binary tree
-			}
-			else
-			{
-				//clear
-				//put all binary tree
-			}
+			if (this = &rhs)
+				return (*this);
+			if (!empty())
+				clear();
+			_Treeroot = rhs._Treeroot;
+			_alloc = rhs._alloc;
+			_key_comp = rhs._key_comp;
+			_size = rhs._size;
+			_max_size = rhs._max_size;
+			//or _size = 0; insert(rhs.begin(), rhs.end());
+			return (*this);
 		}
 
-		map&	operator=(const map& x);
-
 		// ** CAPACITY **
-		bool		empty() const {	if (!_root) return (true); else return (false);	}
+		bool		empty() const {	if (!_Treeroot) return (true); else return (false);	}
 		size_type	size() const {	return (_size);	}
 		size_type	max_size() const {	return (_max_size);	}
 
 		// ** ELEMENT ACCESS **
-		mapped_type&	operator[](const key_type& k);
+		mapped_type&	operator[](const key_type& k)
+		{
+			iterator res = find(k);
+			if (res == end())
+				res = insert(ft::make_pair(key, mapped_type())).key;
+			insert(res->value);
+		}
 
 		// ** MODIFIERS **
 		pair<iterator,bool>	insert(const value_type& val)
 		{
 			if (!_Treeroot->insertNode(val))
-			{
-				return
-			}
+				return(ft::pair(find(val), false)));
+			_size++;
+			return (ft:pair(find(val), true)));
 		}
 		iterator			insert(iterator position, const value_type& val)
 		{
-
+			static_cast<void>(position); // to check
+			return (insert(val).key);
 		}
 		template <class InputIterator>
-		void				insert(InputIterator first, InputIterator last);
-		void				erase(iterator position);
+		void				insert(InputIterator first, InputIterator last)
+		{
+			while (first != last)
+			{
+				insert(first);
+				first++;
+			}
+		}
+		void				erase(iterator position)
+		{
+			erase(position->key);
+		}
 		size_type			erase(const key_type& k)
 		{
-			_Treeroot->deleteNode(k);
+			if (!_Treeroot->deleteNode(k))
+				return (0);
+			_size--;
+			return (1);
 		}
-		void				erase(iterator first, iterator last);
+		void				erase(iterator first, iterator last)
+		{
+			while (first != last)
+			{
+				erase(first);
+				first++;
+			}
+		}
 		void				swap(map& x);
-		void				clear();
+		void				clear()
+		{
+			_Treeroot->~rb_tree();
+			_size = 0;
+		}
 
 		// ** ITERATORS **
 
@@ -121,15 +158,22 @@ class map {
 		value_compare	value_comp() const {	return (_value_comp);	}
 
 		// ** OPERATIONS **
-		iterator		find(const key_type& k);
-		const_iterator	find(const key_type& k) const;
+		iterator		find(const key_type& k)
+		{
+			iterator	res(_Treeroot->searchNode(k));
+			if (!res)
+				return (end());
+			return (res);
+		}
+		const_iterator	find(const key_type& k) const
+		{	return(const_iterator(find(k)));	}
 		size_type		count(const key_type& k) const;
 		iterator		lower_bound(const key_type& k);
 		const_iterator	lower_bound(const key_type& k) const;
 		iterator		upper_bound(const key_type& k);
 		const_iterator	upper_bound(const key_type& k) const;
-		iterator		upper_bound(const key_type& k);
-		const_iterator	upper_bound(const key_type& k) const;
+		ft::pair<iterator, iterator>				equal_range (const key_type& k);
+		ft::pair<const_iterator, const_iterator>	equal_range (const key_type& k) const;
 
 		// ** ALLOCATOR **
 		allocator_type	get_allocator() const {	return (_alloc);	}
@@ -138,8 +182,7 @@ class map {
 		typedef	rb_tree<Key, T, Compare, Alloc>	tree_type;
 
 		tree_type*							_Treeroot
-		allocator_type						_allocp;
-		std::allocator<s_node<value_type>	_allocn;
+		allocator_type						_alloc;
 		key_compare							_key_comp;
 		size_type							_size;
 		size_type							_max_size;

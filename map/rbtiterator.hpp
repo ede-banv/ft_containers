@@ -62,10 +62,10 @@ class rbt_ite {
 		{	return (&operator*());	}
 
 		reference	operator*()
-		{	return (current->data);	}
+		{	return (current->value);	}
 
 		const_reference	operator*() const
-		{	return (current->data)	}
+		{	return (current->value)	}
 
 		bool	operator==(rbt_ite const &rhs) const
 		{	return (current == rhs.current);	}
