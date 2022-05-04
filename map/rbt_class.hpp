@@ -33,7 +33,7 @@ struct s_node
 
 template < class U, class V >
 std::ostream&	operator<<(std::ostream& o, const ft::pair<const U, V>& rhs)
-{	o<<rhs.key;return o;}
+{	o<<rhs.first;return o;}
 
 template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
 class rb_tree {
@@ -51,8 +51,8 @@ class rb_tree {
 		typedef size_t											size_type;
 		typedef	s_node< value_type >*							nodeptr;
 
-		typedef rbt_ite< T, s_node< T > >						iterator;
-		typedef rbt_ite< T const, s_node< T > >				const_iterator;
+		typedef rbt_ite< value_type, s_node< value_type > >						iterator;
+		typedef rbt_ite< const value_type, s_node< value_type > >				const_iterator;
 		typedef ft::reverse_iterator< iterator >				reverse_iterator;
 		typedef ft::reverse_iterator< const_iterator >			const_reverse_iterator;
 
@@ -118,12 +118,12 @@ class rb_tree {
 
 			while (tmp != NULL)
 			{
-				if (!_comp(tmp->value.key, key) && !_comp(key, tmp->value.key))
+				if (!_comp(tmp->value.first, key) && !_comp(key, tmp->value.first))
 				{
 					res = tmp;
 					break ;
 				}
-				else if (!_comp(tmp->value.key, key))
+				else if (!_comp(tmp->value.first, key))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -218,7 +218,7 @@ class rb_tree {
 		}
 		int		insertNode(value_type value)
 		{
-			if (searchNode(value))
+			if (searchNode(value.first))
 				return (0);
 			nodeptr	node = createNewNode(value);
 			nodeptr	x = _root;
@@ -233,19 +233,22 @@ class rb_tree {
 			while (x != NULL)
 			{
 				tmp = x;
-				if (_comp(x->value.key, node->value.key)) // x->v < n->v
+				if (_comp(x->value.first, node->value.first)) // x->v < n->v
 					x = x->right;
 				else
 					x = x->left;
 			}
 			node->parent = tmp;
-			if (_comp(node->value.key, tmp->value.key)) //node->v < tmp->v
+			if (_comp(node->value.first, tmp->value.first)) //node->v < tmp->v
 				tmp->left = node;
 			else
 				tmp->right = node;
 
 			if (node->parent->parent == NULL)
-				return ;
+			{
+				_size++;
+				return (1);
+			}
 			insertFix(node);
 			_size++;
 			return (1);
@@ -439,14 +442,19 @@ class rb_tree {
 		}
 
 		/* * * * Iterator * * * */
+		iterator	createIte(nodeptr  node)
+		{	return (iterator(node, _root));	}
+		const_iterator	createIte(nodeptr  node) const
+		{	return (iterator(node, _root));	}
+
 		iterator	begin()
-		{	return (iterator(min(), _root));	}
+		{	return (iterator(findMin(_root), _root));	}
 		const_iterator	begin() const
-		{	return (const_iterator(min(), _root));	}
+		{	return (const_iterator(findMin(_root), _root));	}
 		iterator	end()
-		{	return (iterator(_nil, _root));	}
+		{	return (iterator(findMax(_root), _root));	}
 		const_iterator	end() const
-		{	return (const_iterator(_nil, _root));	}
+		{	return (const_iterator(findMax(_root), _root));	}
 		reverse_iterator	rbegin()
 		{	return (reverse_iterator(end()));	}
 		const_reverse_iterator	rbegin() const
@@ -457,7 +465,7 @@ class rb_tree {
 		{	return (const_reverse_iterator(begin()));	}
 
 		/* * * * Printer * * * */
-		void    printTree(void) {
+		void    printTree() {
 			std::stringstream buffer;
 			this->_print(this->_root, buffer, true, "");
 			std::cout << buffer.str();
@@ -485,6 +493,9 @@ class rb_tree {
 		nodeptr	_root;
 		nodeptr	last;
 		size_type	_size;
+
+		template < class Value, class Node>
+		friend class rbt_ite;
 
 };
 

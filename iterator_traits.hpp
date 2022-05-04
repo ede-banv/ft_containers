@@ -33,7 +33,7 @@ struct iterator_traits<T*>
 	typedef T*											pointer;
 	typedef T&											reference;
 	typedef	const T&									const_reference;
-	typedef ptrdiff_t									difference_type;
+	typedef std::ptrdiff_t									difference_type;
 	typedef typename std::random_access_iterator_tag	iterator_category;
 };
 
@@ -44,7 +44,7 @@ class iterator_traits<const T*>
 	typedef T*											pointer;
 	typedef T&											reference;
 	typedef	const T&									const_reference;
-	typedef ptrdiff_t									difference_type;
+	typedef std::ptrdiff_t									difference_type;
 	typedef typename std::random_access_iterator_tag	iterator_category;
 };
 

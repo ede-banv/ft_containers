@@ -66,44 +66,38 @@ struct is_integral<int> {
 
 // -------- PAIR
 
-template <class T1,class T2>
-pair<T1,T2> make_pair(T1 x, T2 y)
-{
-	return (ft::pair<T1,T2>(x,y));
-}
-
 template < class Key, class T >
 struct pair {
 	typedef Key	key_type;
 	typedef T	value_type;
 
-	key_type	key;
-	value_type	value;
+	key_type	first;
+	value_type	second;
 
 	pair(void) :
-		key(),
-		value() {}
+		first(),
+		second() {}
 
 	template< class U, class V >
 	pair(const pair<U, V> & pr) :
-		key(pr.key),
-		value(pr.value) {}
+		first(pr.first),
+		second(pr.second) {}
 
 	pair(const key_type & a, const value_type & b) :
-		key(a),
-		value(b) {}
+		first(a),
+		second(b) {}
 
 	pair& operator= (const pair & pr) {
 		if (this == &pr) return *this;
-		key = pr.key;
-		value = pr.value;
+		first = pr.first;
+		second = pr.second;
 		return *this;
 	}
 };
 
 template < class Key, class T >
 bool operator== (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
-	return lhs.key == rhs.key && lhs.value == rhs.value;
+	return lhs.first == rhs.first && lhs.second == rhs.second;
 }
 
 template < class Key, class T >
@@ -113,7 +107,7 @@ bool operator!= (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
 
 template < class Key, class T >
 bool operator<  (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
-	return lhs.key < rhs.key || (!(rhs.key < lhs.key) && lhs.value < rhs.value);
+	return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.value < rhs.value);
 }
 
 template < class Key, class T >

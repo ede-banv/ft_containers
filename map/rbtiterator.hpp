@@ -65,7 +65,7 @@ class rbt_ite {
 		{	return (current->value);	}
 
 		const_reference	operator*() const
-		{	return (current->value)	}
+		{	return (current->value);	}
 
 		bool	operator==(rbt_ite const &rhs) const
 		{	return (current == rhs.current);	}
@@ -114,81 +114,8 @@ class rbt_ite {
 					node = node->left;
 			return (node);
 		}
-
-		/* Si node right alors on return min du node de droite
-			else on remonte les parents de l'arbre
-		nodeptr	_next(nodeptr node) {
-			if (node->right != this->_nil)
-				return (this->_min(node->right));
-			nodeptr parent = node->parent;
-			while (parent != this->_nil && node == parent->right) {
-				node = parent;
-				parent = parent->parent;
-			}
-			return (parent);
-		}
-		nodeptr	_prev(nodeptr node) {
-			if (node->left != this->_nil)
-				return (this->_max(node->left));
-			nodeptr parent = node->parent;
-			while (parent != this->_nil && node == parent->left) {
-				node = parent;
-				parent = parent->parent;
-			}
-			return (parent);
-		}*/
 };
 
-/*
-template < class T >
-class BiDir {
-	public:
-		typedef std::bidirectional_access_iterator_tag	iterator_category;
-		typedef std::ptrdiff_t							difference_type;
-		typedef size_t									size_type;
-		typedef T										value_type;
-		typedef T*										pointer;
-		typedef T&										reference;
-		typedef const T&								const_reference;
-
-		BiDir(): _ptr(NULL) {}
-		BiDir(pointer ptr): _ptr(ptr) {}
-		BiDir(const BiDir& copy){	*this = copy;	}
-		virtual ~BiDir() {}
-
-		BiDir&		operator=(BiDir& const rhs) {
-			if (this == &rhs)
-				return (*this);
-			this->_ptr = rhs._value;
-			return (*this);
-		}
-		BiDir&		operator++() {
-			_ptr++;
-			return (*this);
-		}
-		BiDir		operator++(int) {
-			BiDir	tmp(*this);
-			++(*this);
-			return (tmp);
-		}
-		BiDir&		operator--() {
-			_ptr--;
-			return (*this);
-		}
-		BiDir		operator--(int) {
-			BiDir	tmp(*this);
-			--(*this);
-			return (*this);
-		}
-
-		reference	operator*() const {	return *_ptr;	}
-		pointer		operator->() const {	return _ptr;	}
-		bool		operator==(const RandIt& rhs) const {	return (_ptr == rhs._ptr);	}
-		bool		operator!=(const RandIt& rhs) const {	return (_ptr != rhs._ptr);	}
-	private:
-		value_type	_ptr;
-}
-*/
 }
 
 #endif
