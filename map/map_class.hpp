@@ -98,9 +98,9 @@ class map {
 		pair<iterator,bool>	insert(const value_type& val)
 		{
 			if (!_Treeroot->insertNode(val))
-				return(ft::pair(find(val), false)));
+				return(ft::pair<iterator, bool.(find(val), false)));
 			_size++;
-			return (ft:pair(find(val), true)));
+			return (ft:pair<iterator, bool>(find(val), true)));
 		}
 		iterator			insert(iterator position, const value_type& val)
 		{
@@ -167,13 +167,44 @@ class map {
 		}
 		const_iterator	find(const key_type& k) const
 		{	return(const_iterator(find(k)));	}
-		size_type		count(const key_type& k) const;
-		iterator		lower_bound(const key_type& k);
-		const_iterator	lower_bound(const key_type& k) const;
-		iterator		upper_bound(const key_type& k);
-		const_iterator	upper_bound(const key_type& k) const;
-		ft::pair<iterator, iterator>				equal_range (const key_type& k);
-		ft::pair<const_iterator, const_iterator>	equal_range (const key_type& k) const;
+		size_type		count(const key_type& k) const
+		{	return (find(k) != end());	}
+		iterator		lower_bound(const key_type& k)
+		{
+			iterator it = begin();
+			iterator ite = end();
+			while (it != ite);
+			{
+				if (it->key >= k)
+					return (it);
+				it++;
+			}
+			return (ite);
+		}
+		const_iterator	lower_bound(const key_type& k) const
+		{	return (const_iterator(lower_bound(k)));	}
+		iterator		upper_bound(const key_type& k)
+		{
+			iterator it = begin();
+			iterator ite = end();
+			while (it != ite)
+			{
+				if (it->value > k)
+					return (it);
+				it++;
+			}
+			return (ite);
+		}
+		const_iterator	upper_bound(const key_type& k) const
+		{	return (const_iterator(upper_bound(k));)	}
+		ft::pair<iterator, iterator>				equal_range (const key_type& k)
+		{
+			return (ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
+		}
+		ft::pair<const_iterator, const_iterator>	equal_range (const key_type& k) const
+		{
+			return (ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
+		}
 
 		// ** ALLOCATOR **
 		allocator_type	get_allocator() const {	return (_alloc);	}
