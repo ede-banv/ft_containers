@@ -135,7 +135,26 @@ class map {
 				first++;
 			}
 		}
-		void				swap(map& x);
+		void				swap(map& x)
+		{
+			tree_type*		tmproot = x._Treeroot;
+			allocator_type	tmpalloc = x._alloc;
+			key_compare		tmpkey_comp = x._key_comp;
+			size_type		tmpsize = x._size;
+			size_type		tmpmax_size = x._max_size;
+
+			_Treeroot = xrhs._Treeroot;
+			_alloc = x._alloc;
+			_key_comp = x._key_comp;
+			_size = x._size;
+			_max_size = x._max_size;
+
+			x._Treeroot = tmproot;
+			x._alloc = tmpalloc;
+			x._key_comp = tmpkey_comp;
+			x._size = tmpsize;
+			x._max_size = tmpmax_size;
+		}
 		void				clear()
 		{
 			_Treeroot->~rb_tree();
