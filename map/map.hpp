@@ -53,11 +53,11 @@ class map {
 
 		// ** MEMBER FUNCTIONS **
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-		_Treeroot(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size()) {}
+		_Treeroot(), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size()) {}
 
 		template <class InputIterator>
-		map(InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-		_Treeroot(NULL), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size())
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
+		_Treeroot(), _alloc(alloc), _key_comp(comp), _size(0), _max_size(alloc.max_size())
 		{	insert(first, last);	}
 
 		map(const map& copy)
@@ -72,12 +72,13 @@ class map {
 				return (*this);
 			if (!empty())
 				clear();
-			_Treeroot = rhs._Treeroot;
+			//_Treeroot = rhs._Treeroot;
 			_alloc = rhs._alloc;
 			_key_comp = rhs._key_comp;
-			_size = rhs._size;
+			//_size = rhs._size;
 			_max_size = rhs._max_size;
-			//or _size = 0; insert(rhs.begin(), rhs.end());
+			_size = 0;
+			insert(rhs.begin(), rhs.end());
 			return (*this);
 		}
 
@@ -98,7 +99,7 @@ class map {
 		// ** MODIFIERS **
 		pair<iterator,bool>	insert(const value_type& val)
 		{
-			if (!_Treeroot->insertNode(val))
+			if (!_Treeroot.insertNode(val))
 				return (ft::pair<iterator, bool>(find(val.first), false));
 			_size++;
 			return (ft::pair<iterator, bool>(find(val.first), true));
@@ -123,7 +124,7 @@ class map {
 		}
 		size_type			erase(const key_type& k)
 		{
-			if (!_Treeroot->deleteNode(k))
+			if (!_Treeroot.deleteNode(k))
 				return (0);
 			_size--;
 			return (1);
@@ -158,20 +159,20 @@ class map {
 		}
 		void				clear()
 		{
-			_Treeroot->~rb_tree();
+			_Treeroot.~rb_tree();
 			_size = 0;
 		}
 
 		// ** ITERATORS **
 
-		iterator				begin() {	return (_Treeroot->begin());	} //smallest: far left
-		const_iterator			begin() const {	return (_Treeroot->begin());	} //idem
-		iterator				end() {	return (_Treeroot->end());	} //largest: far right
-		const_iterator			end() const {	return (_Treeroot->end());	} //idem
-		reverse_iterator		rbegin() {	return (_Treeroot->rbegin());	} //largest
-		const_reverse_iterator	rbegin() const {	return (_Treeroot->rbegin());	} //idem
-		reverse_iterator		rend() {	return (_Treeroot->rend());	} //smallest
-		const_reverse_iterator	rend() const {	return (_Treeroot->rend());	} //idem
+		iterator				begin() {	return (_Treeroot.begin());	} //smallest: far left
+		const_iterator			begin() const {	return (_Treeroot.begin());	} //idem
+		iterator				end() {	return (_Treeroot.end());	} //largest: far right
+		const_iterator			end() const {	return (_Treeroot.end());	} //idem
+		reverse_iterator		rbegin() {	return (_Treeroot.rbegin());	} //largest
+		const_reverse_iterator	rbegin() const {	return (_Treeroot.rbegin());	} //idem
+		reverse_iterator		rend() {	return (_Treeroot.rend());	} //smallest
+		const_reverse_iterator	rend() const {	return (_Treeroot.rend());	} //idem
 
 		// ** OBSRVERS **
 		key_compare		key_comp() const {	return (_key_comp);	}
@@ -180,14 +181,14 @@ class map {
 		// ** OPERATIONS **
 		iterator		find(const key_type& k)
 		{
-			s_node<value_type>*	nul = _Treeroot->searchNode(k);
+			s_node<value_type>*	nul = _Treeroot.searchNode(k);
 			if (!nul)
 				return (end());
 			iterator	res(nul);
 			return (res);
 		}
 		const_iterator	find(const key_type& k) const
-		{	return(const_iterator(_Treeroot->createIte(find(k))));	}
+		{	return(const_iterator(_Treeroot.createIte(find(k))));	}
 		size_type		count(const key_type& k) const
 		{	return (find(k) != end());	}
 		iterator		lower_bound(const key_type& k)
@@ -251,7 +252,7 @@ class map {
 		allocator_type	get_allocator() const {	return (_alloc);	}
 
 	private:
-		tree_type*							_Treeroot;
+		tree_type							_Treeroot;
 		allocator_type						_alloc;
 		key_compare							_key_comp;
 		size_type							_size;

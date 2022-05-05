@@ -61,13 +61,13 @@ class rb_tree {
 		_comp(compare), _pairalloc(alloc), _size(0)
 		{
 			_root = NULL;
-			_last = _nodealloc(1);
+			_last = _nodealloc.allocate(1);
 		}
 		rb_tree(rb_tree const &rhs) :
 		_pairalloc(rhs._pairalloc), _comp(rhs._comp), _size(rhs.size)//, _size(size_type(0))
 		{
-			*this= rhs;
-			_last = _nodealloc(1);
+			*this = rhs;
+			_last = _nodealloc.allocate(1);
 		}
 		virtual ~rb_tree()
 		{
@@ -77,10 +77,12 @@ class rb_tree {
 
 		rb_tree&	operator=(rb_tree rhs)
 		{
+			if (this == &rhs)
+				return (*this);
 			delete_recursif(_root);
 			_root = rhs->_root;
 			//other values as well?
-			return (this);
+			return (*this);
 		}
 
 		void	delete_recursif(nodeptr node)
@@ -101,6 +103,12 @@ class rb_tree {
 
 		/* * * * Finders * * * */
 		nodeptr	findMin(nodeptr	node)
+		{
+			while (node->left != NULL)
+				node = node->left;
+			return (node);
+		}
+		nodeptr	findMin(nodeptr	node) const
 		{
 			while (node->left != NULL)
 				node = node->left;
