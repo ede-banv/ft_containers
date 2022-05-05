@@ -84,8 +84,26 @@ class rbt_ite {
 		{	return (current != rhs.current);	}
 
 	private:
+		nodeptr	_max(nodeptr node)
+		{
+			if (node)
+				while (node->right)
+					node = node->right;
+			return (node);
+		}
+
+		nodeptr	_min(nodeptr node)
+		{
+			if (node)
+				while (node->left)
+					node = node->left;
+			return (node);
+		}
+
 		nodeptr	_next(nodeptr node)
 		{
+			if (node->right)
+				return (_min(node->right));
 			nodeptr parent = node->parent;
 			while (parent && node == parent->right)
 			{
@@ -97,6 +115,8 @@ class rbt_ite {
 
 		nodeptr	_prev(nodeptr node)
 		{
+			if (node->left)
+				return (_max(node->left));
 			nodeptr parent = node->parent;
 			while (parent && node == parent->left)
 			{

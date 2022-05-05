@@ -62,17 +62,24 @@ class rb_tree {
 		{
 			_root = NULL;
 			_last = _nodealloc.allocate(1);
+			_last->parent = _last->right = _last->left = NULL;
 		}
 		rb_tree(rb_tree const &rhs) :
 		_pairalloc(rhs._pairalloc), _comp(rhs._comp), _size(rhs.size)//, _size(size_type(0))
 		{
 			*this = rhs;
 			_last = _nodealloc.allocate(1);
+			_last->parent = _last->right = _last->left = NULL;
 		}
 		virtual ~rb_tree()
 		{
 			delete_recursif(_root);
-			_nodealloc.deallocate(_last, 1);
+			_root = NULL;
+			if (_last)
+			{
+				_nodealloc.deallocate(_last, 1);
+				_last = NULL;
+			}
 		}
 
 		rb_tree&	operator=(rb_tree rhs)
@@ -87,11 +94,11 @@ class rb_tree {
 
 		void	delete_recursif(nodeptr node)
 		{
-			if (!node)
+			if (!node || node == _last)
 				return ;
 			if (node->left)
 				delete_recursif(node->left);
-			if (node->right)
+			if (node->right && node->right != _last)
 				delete_recursif(node->right);
 			_pairalloc.destroy(&node->value);
 			_nodealloc.deallocate(node, 1);

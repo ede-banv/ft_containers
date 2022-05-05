@@ -117,6 +117,7 @@ class map {
 				insert(*first);
 				first++;
 			}
+			_Treeroot.printTree();
 		}
 		void				erase(iterator position)
 		{
