@@ -117,7 +117,6 @@ class map {
 				insert(*first);
 				first++;
 			}
-			_Treeroot.printTree();
 		}
 		void				erase(iterator position)
 		{
@@ -222,7 +221,7 @@ class map {
 			iterator ite = end();
 			while (it != ite)
 			{
-				if (it->second > k)
+				if (it->first > k)
 					return (it);
 				it++;
 			}
@@ -234,7 +233,7 @@ class map {
 			const_iterator ite = end();
 			while (it != ite)
 			{
-				if (it->second > k)
+				if (it->first > k)
 					return (it);
 				it++;
 			}
