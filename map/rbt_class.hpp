@@ -61,15 +61,18 @@ class rb_tree {
 		_comp(compare), _pairalloc(alloc), _size(0)
 		{
 			_root = NULL;
+			_last = _nodealloc(1);
 		}
 		rb_tree(rb_tree const &rhs) :
 		_pairalloc(rhs._pairalloc), _comp(rhs._comp), _size(rhs.size)//, _size(size_type(0))
 		{
 			*this= rhs;
+			_last = _nodealloc(1);
 		}
 		virtual ~rb_tree()
 		{
 			delete_recursif(_root);
+			_nodealloc.deallocate(_last, 1);
 		}
 
 		rb_tree&	operator=(rb_tree rhs)
@@ -105,18 +108,22 @@ class rb_tree {
 		}
 		nodeptr	findMax(nodeptr node)
 		{
-			while (node->right != NULL)
+			while (node->right != NULL && node->right != _last)
 				node = node->right;
 			return (node);
 		}
-		nodeptr	findLast()
-		{	return (findMax(_root));	}
+		void	setLast()
+		{
+			nodeptr lastone = findMax(_root);
+			lastone->right = _last;
+			_last->parent = lastone;
+		}
 		nodeptr	searchNode(key_type key)
 		{
 			nodeptr res = NULL;
 			nodeptr tmp = _root;
 
-			while (tmp != NULL)
+			while (tmp != _last && tmp)
 			{
 				if (!_comp(tmp->value.first, key) && !_comp(key, tmp->value.first))
 				{
@@ -228,8 +235,11 @@ class rb_tree {
 			{
 				_root = node;
 				_root->color = 'b';
+				_root->right = _last;
+				_last->parent = _root;
 				return (1);
 			}
+			findMax(_root)->right = NULL;
 			while (x != NULL)
 			{
 				tmp = x;
@@ -247,10 +257,12 @@ class rb_tree {
 			if (node->parent->parent == NULL)
 			{
 				_size++;
+				setLast();
 				return (1);
 			}
 			insertFix(node);
 			_size++;
+			setLast();
 			return (1);
 		}
 		void	insertFix(nodeptr node)
@@ -318,6 +330,7 @@ class rb_tree {
 			if (!tmp)
 				return (false);
 
+			findMax(_root)->right = NULL;
 			y = tmp;
 			char	ogcolor = y->color;
 			if (tmp->left == NULL)
@@ -364,6 +377,7 @@ class rb_tree {
 			if (ogcolor == 'b')
 				deleteFix(x, oldparent, left);
 			_size--;
+			setLast();
 			return (true);
 		}
 		void	deleteFix(nodeptr node, nodeptr parent, bool left)
@@ -442,19 +456,14 @@ class rb_tree {
 		}
 
 		/* * * * Iterator * * * */
-		iterator	createIte(nodeptr  node)
-		{	return (iterator(node, _root));	}
-		const_iterator	createIte(nodeptr  node) const
-		{	return (iterator(node, _root));	}
-
 		iterator	begin()
-		{	return (iterator(findMin(_root), _root));	}
+		{	return (iterator(findMin(_root)));	}
 		const_iterator	begin() const
-		{	return (const_iterator(findMin(_root), _root));	}
+		{	return (const_iterator(findMin(_root)));	}
 		iterator	end()
-		{	return (iterator(findMax(_root), _root));	}
+		{	return (iterator(_last));	}
 		const_iterator	end() const
-		{	return (const_iterator(findMax(_root), _root));	}
+		{	return (const_iterator(_last));	}
 		reverse_iterator	rbegin()
 		{	return (reverse_iterator(end()));	}
 		const_reverse_iterator	rbegin() const
@@ -470,10 +479,11 @@ class rb_tree {
 			this->_print(this->_root, buffer, true, "");
 			std::cout << buffer.str();
 		}
-		void	_print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix) {
-			if (node == NULL)
+		void	_print(nodeptr node, std::stringstream &buffer, bool is_tail, std::string prefix)
+		{
+			if (node == NULL || node == _last)
 				return;
-			if (node->right != NULL)
+			if (node->right != NULL && node->right != _last)
 				this->_print(node->right, buffer, false,
 					std::string(prefix).append(is_tail != 0 ? "│   " : "	"));
 			buffer << prefix << (is_tail != 0 ? "└── " : "┌── ");
@@ -491,7 +501,7 @@ class rb_tree {
 		allocator_type	_pairalloc;
 		std::allocator< s_node< value_type > >	_nodealloc;
 		nodeptr	_root;
-		nodeptr	last;
+		nodeptr	_last;
 		size_type	_size;
 
 		template < class Value, class Node>

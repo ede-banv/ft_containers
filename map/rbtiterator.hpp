@@ -22,25 +22,23 @@ class rbt_ite {
 
 		nodeptr current;
 
-		rbt_ite() : current(NULL), _root(NULL) {}
+		rbt_ite() : current(NULL) {}
 
-		rbt_ite(nodeptr node, nodeptr root) : current(node), _root(root) {}
+		rbt_ite(nodeptr node) : current(node){}
 
-		rbt_ite(rbt_ite const &copy) : current(copy.current), _root(copy._root) {}
+		rbt_ite(rbt_ite const &copy) : current(copy.current) {}
 
 		~rbt_ite() {}
 
 		rbt_ite	&operator=(rbt_ite const &rhs)
 		{
-			if (this != &rhs) {
+			if (this != &rhs)
 				current = rhs.current;
-				_root = rhs._root;
-			}
 			return (*this);
 		}
 
 		operator	rbt_ite<const value_type, Node>() const
-		{	return (rbt_ite<const value_type, Node>(current, _root));	}
+		{	return (rbt_ite<const value_type, Node>(current));	}
 
 		rbt_ite	&operator++()
 		{
@@ -50,8 +48,20 @@ class rbt_ite {
 
 		rbt_ite	operator++(int)
 		{
-			rbt_ite tmp(current, _root);
+			rbt_ite tmp(current);
 			current = _next(current);
+			return (tmp);
+		}
+
+		rbt_ite	&operator--()
+		{
+			current = _prev(current);
+			return (*this);
+		}
+
+		rbt_ite	operator--(int) {
+			rbt_ite tmp(current);
+			current = _prev(current);
 			return (tmp);
 		}
 
@@ -73,46 +83,27 @@ class rbt_ite {
 		bool	operator!=(rbt_ite const &rhs) const
 		{	return (current != rhs.current);	}
 
-	/*-------------------
-		BIDIRECTIONNAL
-	-------------------*/
-
-		rbt_ite	&operator--()
-		{
-			if (current == NULL)
-				current = _max(_root);
-			else
-				current = _prev(current);
-			return (*this);
-		}
-
-		rbt_ite	operator--(int) {
-			rbt_ite tmp(current, _root);
-			if (current == NULL)
-				current = _max(_root);
-			else
-				current = _prev(current);
-			return (tmp);
-		}
-
-	/*-----------
-		UTILS
-	-----------*/
-
 	private:
-		nodeptr _root;
-
-		nodeptr	_max(nodeptr node) {
-			if (node)
-				while (node->right)
-					node = node->right;
-			return (node);
+		nodeptr	_next(nodeptr node)
+		{
+			nodeptr parent = node->parent;
+			while (parent && node == parent->right)
+			{
+				node = parent;
+				parent = parent->parent;
+			}
+			return (parent);
 		}
-		nodeptr	_min(nodeptr node) {
-			if (node)
-				while (node->left)
-					node = node->left;
-			return (node);
+
+		nodeptr	_prev(nodeptr node)
+		{
+			nodeptr parent = node->parent;
+			while (parent && node == parent->left)
+			{
+				node = parent;
+				parent = parent->parent;
+			}
+			return (parent);
 		}
 };
 

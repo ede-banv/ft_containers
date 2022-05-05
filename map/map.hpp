@@ -180,9 +180,10 @@ class map {
 		// ** OPERATIONS **
 		iterator		find(const key_type& k)
 		{
-			iterator	res(_Treeroot->createIte(_Treeroot->searchNode(k)));
-			if (!res)
+			s_node<value_type>*	nul = _Treeroot->searchNode(k);
+			if (!nul)
 				return (end());
+			iterator	res(nul);
 			return (res);
 		}
 		const_iterator	find(const key_type& k) const
@@ -202,7 +203,17 @@ class map {
 			return (ite);
 		}
 		const_iterator	lower_bound(const key_type& k) const
-		{	return (const_iterator(_Treeroot->createIte(lower_bound(k))));	}
+		{
+			const_iterator it = begin();
+			const_iterator ite = end();
+			while (it != ite)
+			{
+				if (it->first >= k)
+					return (it);
+				it++;
+			}
+			return (ite);
+		}
 		iterator		upper_bound(const key_type& k)
 		{
 			iterator it = begin();
@@ -216,14 +227,24 @@ class map {
 			return (ite);
 		}
 		const_iterator	upper_bound(const key_type& k) const
-		{	return (const_iterator(_Treeroot->createIte(upper_bound(k))));	}
+		{
+			const_iterator it = begin();
+			const_iterator ite = end();
+			while (it != ite)
+			{
+				if (it->second > k)
+					return (it);
+				it++;
+			}
+			return (ite);
+		}
 		ft::pair<iterator, iterator>				equal_range (const key_type& k)
 		{
-			return (ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
+			return (ft::make_pair(lower_bound(k), upper_bound(k)));
 		}
 		ft::pair<const_iterator, const_iterator>	equal_range (const key_type& k) const
 		{
-			return (ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
+			return (ft::make_pair(lower_bound(k), upper_bound(k)));
 		}
 
 		// ** ALLOCATOR **
