@@ -80,7 +80,7 @@ class map {
 		}
 
 		// ** CAPACITY **
-		bool		empty() const {	if (!_Treeroot) return (true); else return (false);	}
+		bool		empty() const {	if (!_size) return (true); else return (false);	}
 		size_type	size() const {	return (_size);	}
 		size_type	max_size() const {	return (_max_size);	}
 
@@ -157,6 +157,7 @@ class map {
 		void				clear()
 		{
 			_Treeroot.delete_all();
+			_size = 0;
 		}
 
 		// ** ITERATORS **

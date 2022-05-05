@@ -102,7 +102,7 @@ class rbt_ite {
 
 		nodeptr	_next(nodeptr node)
 		{
-			if (node->right)
+			if (node && node->right)
 				return (_min(node->right));
 			nodeptr parent = node->parent;
 			while (parent && node == parent->right)
@@ -115,7 +115,7 @@ class rbt_ite {
 
 		nodeptr	_prev(nodeptr node)
 		{
-			if (node->left)
+			if (node && node->left)
 				return (_max(node->left));
 			nodeptr parent = node->parent;
 			while (parent && node == parent->left)

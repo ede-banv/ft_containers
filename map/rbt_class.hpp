@@ -394,6 +394,7 @@ class rb_tree {
 			}
 			_pairalloc.destroy(&tmp->value);
 			_nodealloc.deallocate(tmp, 1);
+			tmp =  NULL;
 			if (ogcolor == 'b')
 				deleteFix(x, oldparent, left);
 			_size--;
