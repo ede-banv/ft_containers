@@ -70,12 +70,9 @@ class map {
 		{
 			if (this == &rhs)
 				return (*this);
-			if (!empty())
-				clear();
-			//_Treeroot = rhs._Treeroot;
+			clear();
 			_alloc = rhs._alloc;
 			_key_comp = rhs._key_comp;
-			//_size = rhs._size;
 			_max_size = rhs._max_size;
 			_size = 0;
 			insert(rhs.begin(), rhs.end());
@@ -93,7 +90,7 @@ class map {
 			iterator res = find(k);
 			if (res == end())
 				res = insert(ft::make_pair(k, mapped_type())).first;
-			insert(res->second);
+			return (res->second);
 		}
 
 		// ** MODIFIERS **
