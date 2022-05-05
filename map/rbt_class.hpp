@@ -73,8 +73,7 @@ class rb_tree {
 		}
 		virtual ~rb_tree()
 		{
-			delete_recursif(_root);
-			_root = NULL;
+			delete_all();
 			if (_last)
 			{
 				_nodealloc.deallocate(_last, 1);
@@ -90,6 +89,12 @@ class rb_tree {
 			_root = rhs->_root;
 			//other values as well?
 			return (*this);
+		}
+
+		void	delete_all()
+		{
+			delete_recursif(_root);
+			_root = NULL;
 		}
 
 		void	delete_recursif(nodeptr node)
@@ -111,13 +116,13 @@ class rb_tree {
 		/* * * * Finders * * * */
 		nodeptr	findMin(nodeptr	node)
 		{
-			while (node->left != NULL)
+			while (node && node->left != NULL)
 				node = node->left;
 			return (node);
 		}
 		nodeptr	findMin(nodeptr	node) const
 		{
-			while (node->left != NULL)
+			while (node && node->left != NULL)
 				node = node->left;
 			return (node);
 		}
@@ -472,9 +477,17 @@ class rb_tree {
 
 		/* * * * Iterator * * * */
 		iterator	begin()
-		{	return (iterator(findMin(_root)));	}
+		{
+			if (!_root)
+				return (end());
+			return (iterator(findMin(_root)));
+		}
 		const_iterator	begin() const
-		{	return (const_iterator(findMin(_root)));	}
+		{
+			if (!_root)
+				return (end());
+			return (const_iterator(findMin(_root)));
+		}
 		iterator	end()
 		{	return (iterator(_last));	}
 		const_iterator	end() const

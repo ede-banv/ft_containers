@@ -112,7 +112,7 @@ class map {
 			while (first != last)
 			{
 				insert(*first);
-				first++;
+				++first;
 			}
 		}
 		void				erase(iterator position)
@@ -130,7 +130,7 @@ class map {
 		{
 			while (first != last)
 			{
-				erase(*first);
+				erase(first);
 				first++;
 			}
 		}
@@ -156,8 +156,7 @@ class map {
 		}
 		void				clear()
 		{
-			_Treeroot.~rb_tree();
-			_size = 0;
+			_Treeroot.delete_all();
 		}
 
 		// ** ITERATORS **
