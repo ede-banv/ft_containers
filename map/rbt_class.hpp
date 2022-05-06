@@ -65,7 +65,7 @@ class rb_tree {
 			_last->parent = _last->right = _last->left = NULL;
 		}
 		rb_tree(rb_tree const &rhs) :
-		_pairalloc(rhs._pairalloc), _comp(rhs._comp), _size(rhs.size)//, _size(size_type(0))
+		_comp(rhs._comp), _pairalloc(rhs._pairalloc), _size(rhs._size)//, _size(size_type(0))
 		{
 			*this = rhs;
 			_last = _nodealloc.allocate(1);
@@ -86,7 +86,7 @@ class rb_tree {
 			if (this == &rhs)
 				return (*this);
 			delete_recursif(_root);
-			_root = rhs->_root;
+			_root = rhs._root;
 			//other values as well?
 			return (*this);
 		}
@@ -128,17 +128,37 @@ class rb_tree {
 		}
 		nodeptr	findMax(nodeptr node)
 		{
-			while (node->right != NULL && node->right != _last)
+			while (node && node->right != NULL && node->right != _last)
 				node = node->right;
 			return (node);
 		}
 		void	setLast()
 		{
 			nodeptr lastone = findMax(_root);
-			lastone->right = _last;
+			if (lastone)
+				lastone->right = _last;
 			_last->parent = lastone;
 		}
 		nodeptr	searchNode(key_type key)
+		{
+			nodeptr res = NULL;
+			nodeptr tmp = _root;
+
+			while (tmp != _last && tmp)
+			{
+				if (!_comp(tmp->value.first, key) && !_comp(key, tmp->value.first))
+				{
+					res = tmp;
+					break ;
+				}
+				else if (!_comp(tmp->value.first, key))
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
+			}
+			return (res);
+		}
+		nodeptr	searchNode(key_type key) const
 		{
 			nodeptr res = NULL;
 			nodeptr tmp = _root;
@@ -394,7 +414,6 @@ class rb_tree {
 			}
 			_pairalloc.destroy(&tmp->value);
 			_nodealloc.deallocate(tmp, 1);
-			tmp =  NULL;
 			if (ogcolor == 'b')
 				deleteFix(x, oldparent, left);
 			_size--;

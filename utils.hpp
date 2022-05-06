@@ -107,7 +107,7 @@ bool operator!= (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
 
 template < class Key, class T >
 bool operator<  (const pair<Key, T>& lhs, const pair<Key, T>& rhs) {
-	return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.value < rhs.value);
+	return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second);
 }
 
 template < class Key, class T >
