@@ -65,11 +65,11 @@ class rb_tree {
 			_last->parent = _last->right = _last->left = NULL;
 		}
 		rb_tree(rb_tree const &rhs) :
-		_comp(rhs._comp), _pairalloc(rhs._pairalloc), _size(rhs._size)//, _size(size_type(0))
+		_comp(rhs._comp), _pairalloc(rhs._pairalloc), _size(rhs._size)
 		{
-			*this = rhs;
 			_last = _nodealloc.allocate(1);
 			_last->parent = _last->right = _last->left = NULL;
+			*this = rhs;
 		}
 		virtual ~rb_tree()
 		{
@@ -81,13 +81,16 @@ class rb_tree {
 			}
 		}
 
-		rb_tree&	operator=(rb_tree rhs)
+		rb_tree&	operator=(const rb_tree& rhs)
 		{
 			if (this == &rhs)
 				return (*this);
-			delete_recursif(_root);
-			_root = rhs._root;
-			//other values as well?
+			delete_all();
+			_size = 0;
+			const_iterator it = rhs.begin();
+			const_iterator ite = rhs.end();
+			while (it != ite)
+				insertNode(*(it++));
 			return (*this);
 		}
 
@@ -520,6 +523,22 @@ class rb_tree {
 		{	return (reverse_iterator(begin()));	}
 		const_reverse_iterator	rend() const
 		{	return (const_reverse_iterator(begin()));	}
+
+		/* * * * Swap * * * */
+		void	swap(rb_tree& x)
+		{
+			nodeptr tmpr = _root;
+			nodeptr tmpl = _last;
+			size_type tmps = _size;
+
+			_root = x._root;
+			_last = x._last;
+			_size = x._size;
+
+			x._root = tmpr;
+			x._last = tmpl;
+			x._size = tmps;
+		}
 
 		/* * * * Printer * * * */
 		void    printTree() {

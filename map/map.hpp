@@ -133,19 +133,19 @@ class map {
 		}
 		void				swap(map& x)
 		{
-			tree_type		tmproot = x._Treeroot;
-			allocator_type	tmpalloc = x._alloc;
-			key_compare		tmpkey_comp = x._key_comp;
-			size_type		tmpsize = x._size;
-			size_type		tmpmax_size = x._max_size;
+			_Treeroot.swap(x._Treeroot);
+			allocator_type	tmpalloc = _alloc;
+			key_compare		tmpkey_comp = _key_comp;
+			size_type		tmpsize = _size;
+			size_type		tmpmax_size = _max_size;
 
-			_Treeroot = x._Treeroot;
+			//_Treeroot = x._Treeroot;
 			_alloc = x._alloc;
 			_key_comp = x._key_comp;
 			_size = x._size;
 			_max_size = x._max_size;
 
-			x._Treeroot = tmproot;
+			//x._Treeroot = tmproot;
 			x._alloc = tmpalloc;
 			x._key_comp = tmpkey_comp;
 			x._size = tmpsize;

@@ -104,7 +104,7 @@ class rbt_ite {
 		{
 			if (node && node->right)
 				return (_min(node->right));
-			nodeptr parent = node->parent;
+			nodeptr parent = node ? node->parent : NULL;
 			while (parent && node == parent->right)
 			{
 				node = parent;
