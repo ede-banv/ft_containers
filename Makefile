@@ -27,7 +27,7 @@ $(NAME) : $(SRCS)
 	diff ${FTTEST} ${STDTEST} > ${DIFFTEST} || true
 
 clean :
-	rm -f $(OBJECTS) ${FTTEST} ${STDTEST} ${DIFFTEST}
+	rm -f ${FTTEST} ${STDTEST} ${DIFFTEST}
 
 fclean : clean
 	rm -f $(NAME)
