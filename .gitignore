@@ -33,3 +33,4 @@
 
 *.vscode*
 *containers_test*
+*.test*
